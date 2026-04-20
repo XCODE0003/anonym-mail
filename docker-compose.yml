@@ -17,6 +17,7 @@ services:
       - ./admin/public:/var/www/admin/public:ro
     depends_on:
       - php
+      - ws-proxy
     networks:
       - frontend
       - backend
@@ -86,6 +87,22 @@ services:
     container_name: anonym-mail-redis
     restart: unless-stopped
     command: redis-server --appendonly no --save ""
+    networks:
+      - backend
+
+  # ===========================================================================
+  # WEBSOCKET PROXY (for JS IMAP client)
+  # ===========================================================================
+  ws-proxy:
+    build:
+      context: ./ws-proxy
+      dockerfile: Dockerfile
+    container_name: anonym-mail-ws-proxy
+    restart: unless-stopped
+    environment:
+      - WS_PORT=8080
+      - IMAP_HOST=${IMAP_HOST:-dovecot}
+      - IMAP_PORT=${IMAP_PORT:-993}
     networks:
       - backend
 
