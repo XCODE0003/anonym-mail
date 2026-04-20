@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Head outline -->
+  <path d="M32 8c-12 0-20 10-20 22 0 8 4 14 10 18v8c0 2 2 4 4 4h12c2 0 4-2 4-4v-8c6-4 10-10 10-18 0-12-8-22-20-22z"/>
+  
+  <!-- Ears/Tufts -->
+  <path d="M16 18c-2-6 0-12 4-14"/>
+  <path d="M48 18c2-6 0-12-4-14"/>
+  
+  <!-- Left eye -->
+  <circle cx="24" cy="28" r="6"/>
+  <circle cx="24" cy="28" r="2" fill="currentColor"/>
+  
+  <!-- Right eye -->
+  <circle cx="40" cy="28" r="6"/>
+  <circle cx="40" cy="28" r="2" fill="currentColor"/>
+  
+  <!-- Beak -->
+  <path d="M32 34l-3 6 3 2 3-2-3-6z" fill="currentColor"/>
+  
+  <!-- Chest feathers -->
+  <path d="M26 44c2 2 4 3 6 3s4-1 6-3"/>
+  <path d="M24 48c3 2 5 3 8 3s5-1 8-3"/>
+</svg>

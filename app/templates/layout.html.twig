@@ -11,7 +11,19 @@
 <body class="{% block body_class %}{% endblock %}">
     <header class="site-header">
         <div class="container">
-            <a href="/" class="logo">{{ brand_name }}</a>
+            <a href="/" class="logo">
+                <svg class="logo-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M32 8c-12 0-20 10-20 22 0 8 4 14 10 18v8c0 2 2 4 4 4h12c2 0 4-2 4-4v-8c6-4 10-10 10-18 0-12-8-22-20-22z"/>
+                    <path d="M16 18c-2-6 0-12 4-14"/>
+                    <path d="M48 18c2-6 0-12-4-14"/>
+                    <circle cx="24" cy="28" r="6"/>
+                    <circle cx="24" cy="28" r="2" fill="currentColor"/>
+                    <circle cx="40" cy="28" r="6"/>
+                    <circle cx="40" cy="28" r="2" fill="currentColor"/>
+                    <path d="M32 34l-3 6 3 2 3-2-3-6z" fill="currentColor"/>
+                </svg>
+                {{ brand_name }}
+            </a>
             <nav class="main-nav">
                 <a href="/webmail">Mail</a>
                 <a href="/register">Register</a>
