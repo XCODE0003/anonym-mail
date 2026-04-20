@@ -38,7 +38,7 @@ function requireAuth(Request $request): bool
 
 $app->get('/', function (Request $request, Response $response) {
     if (isset($_SESSION['webmail_user'])) {
-        return $response->withHeader('Location', '/inbox')->withStatus(302);
+        return $response->withHeader('Location', '/webmail/inbox')->withStatus(302);
     }
     
     /** @var Environment $twig */
@@ -67,7 +67,7 @@ $app->post('/login', function (Request $request, Response $response) {
         ];
         $imap->logout();
         
-        return $response->withHeader('Location', '/inbox')->withStatus(302);
+        return $response->withHeader('Location', '/webmail/inbox')->withStatus(302);
     }
     
     return webmailRender($response, $twig, 'login.html.twig', [
@@ -80,7 +80,7 @@ $app->get('/logout', function (Request $request, Response $response) {
     unset($_SESSION['webmail_user']);
     session_destroy();
     
-    return $response->withHeader('Location', '/')->withStatus(302);
+    return $response->withHeader('Location', '/webmail/')->withStatus(302);
 });
 
 // =============================================================================
@@ -89,15 +89,15 @@ $app->get('/logout', function (Request $request, Response $response) {
 
 $app->get('/inbox', function (Request $request, Response $response) {
     if (!requireAuth($request)) {
-        return $response->withHeader('Location', '/')->withStatus(302);
+        return $response->withHeader('Location', '/webmail/')->withStatus(302);
     }
     
-    return $response->withHeader('Location', '/folder/INBOX')->withStatus(302);
+    return $response->withHeader('Location', '/webmail/folder/INBOX')->withStatus(302);
 });
 
 $app->get('/folder/{folder}', function (Request $request, Response $response, array $args) {
     if (!requireAuth($request)) {
-        return $response->withHeader('Location', '/')->withStatus(302);
+        return $response->withHeader('Location', '/webmail/')->withStatus(302);
     }
     
     /** @var Environment $twig */
@@ -112,7 +112,7 @@ $app->get('/folder/{folder}', function (Request $request, Response $response, ar
     
     if (!$imap->login($user['email'], $user['password'])) {
         unset($_SESSION['webmail_user']);
-        return $response->withHeader('Location', '/')->withStatus(302);
+        return $response->withHeader('Location', '/webmail/')->withStatus(302);
     }
     
     $folders = $imap->getFolders();
@@ -139,7 +139,7 @@ $app->get('/folder/{folder}', function (Request $request, Response $response, ar
 
 $app->get('/message/{folder}/{uid}', function (Request $request, Response $response, array $args) {
     if (!requireAuth($request)) {
-        return $response->withHeader('Location', '/')->withStatus(302);
+        return $response->withHeader('Location', '/webmail/')->withStatus(302);
     }
     
     /** @var Environment $twig */
@@ -154,7 +154,7 @@ $app->get('/message/{folder}/{uid}', function (Request $request, Response $respo
     $uid = (int) $args['uid'];
     
     if (!$imap->login($user['email'], $user['password'])) {
-        return $response->withHeader('Location', '/')->withStatus(302);
+        return $response->withHeader('Location', '/webmail/')->withStatus(302);
     }
     
     $folders = $imap->getFolders();
@@ -162,7 +162,7 @@ $app->get('/message/{folder}/{uid}', function (Request $request, Response $respo
     
     if ($message === null) {
         $imap->logout();
-        return $response->withHeader('Location', '/folder/' . urlencode($folder))->withStatus(302);
+        return $response->withHeader('Location', '/webmail/folder/' . urlencode($folder))->withStatus(302);
     }
     
     // Mark as read
@@ -189,7 +189,7 @@ $app->get('/message/{folder}/{uid}', function (Request $request, Response $respo
 
 $app->get('/compose', function (Request $request, Response $response) {
     if (!requireAuth($request)) {
-        return $response->withHeader('Location', '/')->withStatus(302);
+        return $response->withHeader('Location', '/webmail/')->withStatus(302);
     }
     
     /** @var Environment $twig */
@@ -201,7 +201,7 @@ $app->get('/compose', function (Request $request, Response $response) {
     $params = $request->getQueryParams();
     
     if (!$imap->login($user['email'], $user['password'])) {
-        return $response->withHeader('Location', '/')->withStatus(302);
+        return $response->withHeader('Location', '/webmail/')->withStatus(302);
     }
     
     $folders = $imap->getFolders();
@@ -218,7 +218,7 @@ $app->get('/compose', function (Request $request, Response $response) {
 
 $app->post('/compose', function (Request $request, Response $response) {
     if (!requireAuth($request)) {
-        return $response->withHeader('Location', '/')->withStatus(302);
+        return $response->withHeader('Location', '/webmail/')->withStatus(302);
     }
     
     /** @var Environment $twig */
@@ -234,7 +234,7 @@ $app->post('/compose', function (Request $request, Response $response) {
     $messageBody = $body['body'] ?? '';
     
     if (!$imap->login($user['email'], $user['password'])) {
-        return $response->withHeader('Location', '/')->withStatus(302);
+        return $response->withHeader('Location', '/webmail/')->withStatus(302);
     }
     
     // Send email via SMTP
@@ -266,7 +266,7 @@ $app->post('/compose', function (Request $request, Response $response) {
 
 $app->get('/reply/{folder}/{uid}', function (Request $request, Response $response, array $args) {
     if (!requireAuth($request)) {
-        return $response->withHeader('Location', '/')->withStatus(302);
+        return $response->withHeader('Location', '/webmail/')->withStatus(302);
     }
     
     /** @var Environment $twig */
@@ -279,7 +279,7 @@ $app->get('/reply/{folder}/{uid}', function (Request $request, Response $respons
     $uid = (int) $args['uid'];
     
     if (!$imap->login($user['email'], $user['password'])) {
-        return $response->withHeader('Location', '/')->withStatus(302);
+        return $response->withHeader('Location', '/webmail/')->withStatus(302);
     }
     
     $folders = $imap->getFolders();
@@ -287,7 +287,7 @@ $app->get('/reply/{folder}/{uid}', function (Request $request, Response $respons
     $imap->logout();
     
     if ($original === null) {
-        return $response->withHeader('Location', '/folder/' . urlencode($folder))->withStatus(302);
+        return $response->withHeader('Location', '/webmail/folder/' . urlencode($folder))->withStatus(302);
     }
     
     // Prepare reply
@@ -314,7 +314,7 @@ $app->get('/reply/{folder}/{uid}', function (Request $request, Response $respons
 
 $app->get('/forward/{folder}/{uid}', function (Request $request, Response $response, array $args) {
     if (!requireAuth($request)) {
-        return $response->withHeader('Location', '/')->withStatus(302);
+        return $response->withHeader('Location', '/webmail/')->withStatus(302);
     }
     
     /** @var Environment $twig */
@@ -327,7 +327,7 @@ $app->get('/forward/{folder}/{uid}', function (Request $request, Response $respo
     $uid = (int) $args['uid'];
     
     if (!$imap->login($user['email'], $user['password'])) {
-        return $response->withHeader('Location', '/')->withStatus(302);
+        return $response->withHeader('Location', '/webmail/')->withStatus(302);
     }
     
     $folders = $imap->getFolders();
@@ -335,7 +335,7 @@ $app->get('/forward/{folder}/{uid}', function (Request $request, Response $respo
     $imap->logout();
     
     if ($original === null) {
-        return $response->withHeader('Location', '/folder/' . urlencode($folder))->withStatus(302);
+        return $response->withHeader('Location', '/webmail/folder/' . urlencode($folder))->withStatus(302);
     }
     
     // Prepare forward
@@ -365,7 +365,7 @@ $app->get('/forward/{folder}/{uid}', function (Request $request, Response $respo
 
 $app->post('/message/delete', function (Request $request, Response $response) {
     if (!requireAuth($request)) {
-        return $response->withHeader('Location', '/')->withStatus(302);
+        return $response->withHeader('Location', '/webmail/')->withStatus(302);
     }
     
     /** @var ImapClient $imap */
@@ -381,12 +381,12 @@ $app->post('/message/delete', function (Request $request, Response $response) {
         $imap->logout();
     }
     
-    return $response->withHeader('Location', '/folder/' . urlencode($folder))->withStatus(302);
+    return $response->withHeader('Location', '/webmail/folder/' . urlencode($folder))->withStatus(302);
 });
 
 $app->post('/message/move', function (Request $request, Response $response) {
     if (!requireAuth($request)) {
-        return $response->withHeader('Location', '/')->withStatus(302);
+        return $response->withHeader('Location', '/webmail/')->withStatus(302);
     }
     
     /** @var ImapClient $imap */
@@ -403,7 +403,7 @@ $app->post('/message/move', function (Request $request, Response $response) {
         $imap->logout();
     }
     
-    return $response->withHeader('Location', '/folder/' . urlencode($folder))->withStatus(302);
+    return $response->withHeader('Location', '/webmail/folder/' . urlencode($folder))->withStatus(302);
 });
 
 // =============================================================================
@@ -412,7 +412,7 @@ $app->post('/message/move', function (Request $request, Response $response) {
 
 $app->get('/search', function (Request $request, Response $response) {
     if (!requireAuth($request)) {
-        return $response->withHeader('Location', '/')->withStatus(302);
+        return $response->withHeader('Location', '/webmail/')->withStatus(302);
     }
     
     /** @var Environment $twig */
@@ -426,7 +426,7 @@ $app->get('/search', function (Request $request, Response $response) {
     $folder = $params['folder'] ?? 'INBOX';
     
     if (!$imap->login($user['email'], $user['password'])) {
-        return $response->withHeader('Location', '/')->withStatus(302);
+        return $response->withHeader('Location', '/webmail/')->withStatus(302);
     }
     
     $folders = $imap->getFolders();
@@ -453,7 +453,7 @@ $app->get('/search', function (Request $request, Response $response) {
 
 $app->get('/settings', function (Request $request, Response $response) {
     if (!requireAuth($request)) {
-        return $response->withHeader('Location', '/')->withStatus(302);
+        return $response->withHeader('Location', '/webmail/')->withStatus(302);
     }
     
     /** @var Environment $twig */
@@ -464,7 +464,7 @@ $app->get('/settings', function (Request $request, Response $response) {
     $user = $_SESSION['webmail_user'];
     
     if (!$imap->login($user['email'], $user['password'])) {
-        return $response->withHeader('Location', '/')->withStatus(302);
+        return $response->withHeader('Location', '/webmail/')->withStatus(302);
     }
     
     $folders = $imap->getFolders();
