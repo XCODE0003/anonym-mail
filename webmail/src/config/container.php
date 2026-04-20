@@ -12,8 +12,9 @@ use Psr\Container\ContainerInterface;
 
 return [
     ImapClient::class => function (ContainerInterface $c) {
+        // Use dovecot container name for internal Docker network
         return new ImapClient(
-            host: $_ENV['MAIL_HOSTNAME'] ?? 'dovecot',
+            host: 'dovecot',
             port: 993,
             encryption: 'ssl'
         );
