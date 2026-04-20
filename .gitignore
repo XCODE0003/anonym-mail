@@ -1,0 +1,68 @@
+# Environment
+.env
+.env.local
+.env.*.local
+
+# PHP
+/app/vendor/
+composer.lock
+*.phar
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Docker
+docker-compose.override.yml
+
+# Logs (should never exist, but just in case)
+*.log
+/logs/
+
+# TLS/SSL
+/certs/*.pem
+/certs/*.key
+/certs/*.crt
+*.p12
+
+# Tor
+/tor/hidden_service/
+*.onion
+
+# DKIM private keys
+/dkim/*.private
+/dkim/*.key
+
+# Maildir data
+/maildata/
+
+# Redis dumps
+dump.rdb
+
+# PHPUnit
+.phpunit.result.cache
+.phpunit.cache/
+/coverage/
+
+# PHPStan
+phpstan.neon.local
+
+# Temporary files
+/tmp/
+*.tmp
+
+# Backup files
+*.bak
+*.backup
+/backups/
+
+# OS files
+Thumbs.db
+ehthumbs.db
+
+# Test artifacts
+/tests/output/

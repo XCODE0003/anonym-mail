@@ -1,0 +1,105 @@
+version: '3.8'
+
+services:
+  # ===========================================================================
+  # WEB SERVER
+  # ===========================================================================
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: anonym-mail-nginx
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - ./config/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./app/public:/var/www/app/public:ro
+      - ./webmail/public:/var/www/webmail/public:ro
+      - ./admin/public:/var/www/admin/public:ro
+    depends_on:
+      - php
+    networks:
+      - frontend
+      - backend
+
+  # ===========================================================================
+  # PHP APPLICATION
+  # ===========================================================================
+  php:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: anonym-mail-php
+    restart: unless-stopped
+    environment:
+      - APP_ENV=${APP_ENV:-development}
+      - APP_DEBUG=${APP_DEBUG:-true}
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_NAME=${DB_NAME:-mailservice}
+      - DB_USER=${DB_USER:-mailservice}
+      - DB_PASSWORD=${DB_PASSWORD:-devpassword123}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - PRIMARY_DOMAIN=${PRIMARY_DOMAIN:-anonym-mail-service.test}
+      - BRAND_NAME=${BRAND_NAME:-Anonym Mail}
+    volumes:
+      - ./app:/var/www/app
+      - ./webmail:/var/www/webmail
+      - ./admin:/var/www/admin
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - backend
+
+  # ===========================================================================
+  # DATABASE (MySQL)
+  # ===========================================================================
+  mysql:
+    image: mysql:8.0
+    container_name: anonym-mail-mysql
+    restart: unless-stopped
+    environment:
+      - MYSQL_DATABASE=${DB_NAME:-mailservice}
+      - MYSQL_USER=${DB_USER:-mailservice}
+      - MYSQL_PASSWORD=${DB_PASSWORD:-devpassword123}
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD:-rootpassword}
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./app/migrations:/docker-entrypoint-initdb.d:ro
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+
+  # ===========================================================================
+  # CACHE & SESSIONS
+  # ===========================================================================
+  redis:
+    image: redis:7-alpine
+    container_name: anonym-mail-redis
+    restart: unless-stopped
+    command: redis-server --appendonly no --save ""
+    networks:
+      - backend
+
+# =============================================================================
+# NETWORKS
+# =============================================================================
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
+
+# =============================================================================
+# VOLUMES
+# =============================================================================
+volumes:
+  mysql_data:

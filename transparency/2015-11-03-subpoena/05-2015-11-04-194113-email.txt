@@ -1,0 +1,16 @@
+Return-Path: <mhuntley@wilco.org>
+X-Original-To: vc@cock.li
+Delivered-To: vc@cock.li
+From: Mark Huntley <mhuntley@wilco.org>
+To: Vincent Canfield <vc@cock.li>
+Subject: RE: Subpoena
+Date: Wed, 4 Nov 2015 19:41:13 +0000
+Message-ID: <821e2af25fc84d38b1d7dc086f762d3c@wcmail14.wilco.org>
+References: <4e4c8331d1874123bdc00afdb2163c9e@wcmail14.wilco.org>
+ <563A4058.2040609@cock.li> <8B92E929-A2D7-4B38-AC49-BAE1032F2A70@wilco.org>
+ <563A47E9.2050305@cock.li>
+In-Reply-To: <563A47E9.2050305@cock.li>
+
+[snip stuff about data] Was there any alternate email address associated with the "[snip]" account, or even a name captured during the registration process?
+
+Thanks,

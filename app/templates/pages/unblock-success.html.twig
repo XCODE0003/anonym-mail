@@ -1,0 +1,27 @@
+{% extends 'layout.html.twig' %}
+
+{% block body_class %}page-unblock-success{% endblock %}
+
+{% block content %}
+<div class="page-form">
+    <h1>SMTP Unblocked</h1>
+    
+    <div class="message message-success">
+        <p>Your SMTP access has been successfully unblocked!</p>
+        <p>Email: <strong>{{ email }}</strong></p>
+    </div>
+    
+    <p>You can now send emails using your email client or webmail.</p>
+    
+    <h2>SMTP Settings</h2>
+    <ul>
+        <li><strong>Server:</strong> <code>mail.{{ primary_domain }}</code></li>
+        <li><strong>Port:</strong> <code>465</code> (SSL/TLS) or <code>587</code> (STARTTLS)</li>
+        <li><strong>Username:</strong> <code>{{ email }}</code></li>
+    </ul>
+    
+    <div style="margin-top: 2rem;">
+        <a href="/webmail" class="btn btn-primary">Go to Webmail</a>
+    </div>
+</div>
+{% endblock %}

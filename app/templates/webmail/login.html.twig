@@ -1,0 +1,32 @@
+{% extends 'webmail/layout.html.twig' %}
+
+{% block login_content %}
+<div class="login-container">
+    <h1>Sign In</h1>
+    
+    {% if error is defined %}
+    <div class="message message-error">{{ error }}</div>
+    {% endif %}
+    
+    <form method="POST" action="/webmail/login" class="login-form">
+        <input type="hidden" name="csrf" value="{{ csrf_token }}">
+        <input type="hidden" name="csrf_valid" value="{{ csrf_token }}">
+        
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="you@domain.com" required autofocus>
+        </div>
+        
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Sign In</button>
+    </form>
+    
+    <p class="login-links">
+        <a href="/">Home</a> · <a href="/register">Register</a>
+    </p>
+</div>
+{% endblock %}

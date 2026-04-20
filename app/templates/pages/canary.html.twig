@@ -1,0 +1,19 @@
+{% extends 'layout.html.twig' %}
+
+{% block content %}
+<div class="page-form">
+    <h1>Warrant Canary</h1>
+    <div class="content-block">
+        <p>As of the date below, we have not received any:</p>
+        <ul class="trust-list">
+            <li>National Security Letters</li>
+            <li>FISA court orders</li>
+            <li>Gag orders</li>
+            <li>Requests for user data</li>
+        </ul>
+        <p style="margin-top: 1rem; color: var(--text-muted);">
+            This canary is updated monthly and PGP-signed.
+        </p>
+    </div>
+</div>
+{% endblock %}

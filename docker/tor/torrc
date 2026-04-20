@@ -1,0 +1,31 @@
+# Tor Hidden Service Configuration (Docker version)
+
+Log notice file /dev/null
+DataDirectory /var/lib/tor
+SocksPort 0
+
+# Web
+HiddenServiceDir /var/lib/tor/hidden_service_web/
+HiddenServiceVersion 3
+HiddenServicePort 80 nginx:8080
+
+# Webmail
+HiddenServiceDir /var/lib/tor/hidden_service_webmail/
+HiddenServiceVersion 3
+HiddenServicePort 80 nginx:8081
+
+# SMTP
+HiddenServiceDir /var/lib/tor/hidden_service_smtp/
+HiddenServiceVersion 3
+HiddenServicePort 25 postfix:25
+HiddenServicePort 587 postfix:587
+
+# IMAP
+HiddenServiceDir /var/lib/tor/hidden_service_imap/
+HiddenServiceVersion 3
+HiddenServicePort 993 dovecot:993
+HiddenServicePort 143 dovecot:143
+
+ORPort 0
+DirPort 0
+ExitPolicy reject *:*

@@ -1,0 +1,53 @@
+{% extends 'layout.html.twig' %}
+
+{% block body_class %}page-home{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <h1>{{ brand_name }}</h1>
+    <p class="tagline">Anonymous email. No JS. No logs.</p>
+    
+    <div class="hero-badges">
+        <span class="badge">NO JS</span>
+        <span class="badge">NO LOGS</span>
+        <span class="badge">TOR</span>
+    </div>
+    
+    <div class="hero-actions">
+        <a href="/register" class="btn btn-primary">Create Account</a>
+        <a href="/webmail" class="btn btn-secondary">Sign In</a>
+    </div>
+</section>
+
+{% if announcement %}
+<div class="announcement">{{ announcement|raw }}</div>
+{% endif %}
+
+<section class="trust-section">
+    <h2>Privacy First</h2>
+    <div class="trust-content">
+        <p>No personal data required. No IP logging. Argon2id passwords. Warrant canary.</p>
+        <ul class="trust-list">
+            <li>No phone required</li>
+            <li>No recovery email</li>
+            <li>No KYC</li>
+            <li>Zero JavaScript</li>
+            <li>Tor support</li>
+        </ul>
+    </div>
+</section>
+
+<section class="server-info">
+    <h2>Connection</h2>
+    <div class="info-grid">
+        <div class="info-card">
+            <h3>IMAP</h3>
+            <code>{{ primary_domain }}:993</code>
+        </div>
+        <div class="info-card">
+            <h3>SMTP</h3>
+            <code>{{ primary_domain }}:465</code>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block content %}
+<h2>Content</h2>
+
+<div class="card">
+    <table>
+        <thead>
+            <tr>
+                <th>Page</th>
+                <th>Updated</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for block in blocks %}
+            <tr>
+                <td>{{ block.key }}</td>
+                <td>{{ block.updated_at }}</td>
+                <td><a href="/admin/content/{{ block.key }}" class="btn btn-sm btn-secondary">Edit</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

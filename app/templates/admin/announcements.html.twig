@@ -1,0 +1,44 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block content %}
+<h2>Announcements</h2>
+
+<div class="card">
+    <form method="POST" action="/admin/announcements/save">
+        <input type="hidden" name="csrf" value="{{ csrf_token }}">
+        <input type="hidden" name="csrf_valid" value="{{ csrf_token }}">
+        
+        <div class="form-group">
+            <label for="body">Text</label>
+            <textarea id="body" name="body" rows="3"></textarea>
+        </div>
+        
+        <div class="form-group">
+            <label><input type="checkbox" name="active" value="1" checked> Active</label>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Post</button>
+    </form>
+</div>
+
+{% if announcements|length > 0 %}
+<div class="card">
+    <table>
+        <thead>
+            <tr>
+                <th>Content</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ann in announcements %}
+            <tr>
+                <td>{{ ann.body|slice(0, 80) }}{% if ann.body|length > 80 %}...{% endif %}</td>
+                <td>{% if ann.active %}<span class="badge badge-success">Active</span>{% else %}<span class="badge badge-warn">Inactive</span>{% endif %}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends 'webmail/layout.html.twig' %}
+
+{% block content %}
+<div class="search-view">
+    <h1>Search</h1>
+    
+    <form method="GET" action="/webmail/search" class="search-form">
+        <div class="search-row">
+            <input type="text" name="q" value="{{ query|default('')|e }}" placeholder="Search...">
+            <select name="folder">
+                {% for f in folders %}
+                <option value="{{ f }}" {% if folder == f %}selected{% endif %}>{{ f }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+    </form>
+    
+    {% if results|length > 0 %}
+    <table class="message-list">
+        <thead>
+            <tr>
+                <th class="col-from">From</th>
+                <th class="col-subject">Subject</th>
+                <th class="col-date">Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for msg in results %}
+            <tr>
+                <td class="col-from">
+                    <a href="/webmail/message/{{ folder|url_encode }}/{{ msg.uid }}">{{ msg.from|e }}</a>
+                </td>
+                <td class="col-subject">
+                    <a href="/webmail/message/{{ folder|url_encode }}/{{ msg.uid }}">{{ msg.subject|default('(No Subject)')|e }}</a>
+                </td>
+                <td class="col-date">{{ msg.date|date('M j') }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% elseif query %}
+    <p>No results found.</p>
+    {% endif %}
+</div>
+{% endblock %}

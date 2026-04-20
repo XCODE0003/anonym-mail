@@ -1,0 +1,58 @@
+{% extends 'webmail/layout.html.twig' %}
+
+{% block content %}
+<div class="message-view">
+    <div class="message-actions">
+        <a href="/webmail/reply/{{ current_folder|url_encode }}/{{ message.uid }}" class="btn btn-secondary btn-sm">Reply</a>
+        <a href="/webmail/forward/{{ current_folder|url_encode }}/{{ message.uid }}" class="btn btn-secondary btn-sm">Forward</a>
+        
+        <form method="POST" action="/webmail/message/move" class="inline-form">
+            <input type="hidden" name="csrf" value="{{ csrf_token }}">
+            <input type="hidden" name="csrf_valid" value="{{ csrf_token }}">
+            <input type="hidden" name="folder" value="{{ current_folder }}">
+            <input type="hidden" name="uid" value="{{ message.uid }}">
+            <select name="destination">
+                <option value="">Move to...</option>
+                {% for folder in folders %}
+                {% if folder != current_folder %}
+                <option value="{{ folder }}">{{ folder }}</option>
+                {% endif %}
+                {% endfor %}
+            </select>
+            <button type="submit" class="btn btn-secondary btn-sm">Move</button>
+        </form>
+        
+        <form method="POST" action="/webmail/message/delete" class="inline-form">
+            <input type="hidden" name="csrf" value="{{ csrf_token }}">
+            <input type="hidden" name="csrf_valid" value="{{ csrf_token }}">
+            <input type="hidden" name="folder" value="{{ current_folder }}">
+            <input type="hidden" name="uid" value="{{ message.uid }}">
+            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+        </form>
+        
+        <a href="/webmail/folder/{{ current_folder|url_encode }}" class="btn btn-secondary btn-sm">Back</a>
+    </div>
+    
+    <div class="message-header">
+        <h1>{{ message.subject|default('(No Subject)')|e }}</h1>
+        <dl class="message-meta">
+            <dt>From</dt>
+            <dd>{{ message.from|e }}</dd>
+            <dt>To</dt>
+            <dd>{{ message.to|e }}</dd>
+            <dt>Date</dt>
+            <dd>{{ message.date }}</dd>
+        </dl>
+    </div>
+    
+    <div class="message-body">
+        {% if message.html %}
+        <div class="html-content">{{ message.html|raw }}</div>
+        {% elseif message.text %}
+        <pre class="text-content">{{ message.text|e }}</pre>
+        {% else %}
+        <p>(No content)</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,655 @@
+Cock.li — Service Update Log
+
+The goal of this file is to provide a single document which contains all
+updates to cock.li since 2024-11-12. Updates are posted at the top, so
+the contents are reverse-chronological.
+
+Previous updates may be changed but only to better provide details or
+context relevant to the time when it was originally posted. Use `diff`
+on a previously downloaded copy to easily see all changes.
+
+~!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!~
+
+20 January 2026
+
+Cock.li Announces Development of "Cock-mail":
+    an Open Source Client-side Webmail Client
+
+Cock.li has lacked webmail for many months now. We've been looking for a
+suitable alternative but are disturbed about the current state of
+webmail.  Determined to not trust the wrong software suite again, we
+embarked on a journey to bring webmail back to cock.li in a way that
+satisfies our requirements at any cost.
+
+We had a secret project to fork Claws-Mail to work in browser. This
+would allow us to open IMAP and SMTP websocket endpoints and completely
+eliminate the risk of security vulnerabilities in webmail software from
+affecting our systems. If a vulnerability was discovered in Claws-Mail,
+it would be limited in scope to only affect single users, which is much
+more acceptable to us.
+
+Unfortunately, the level of work required to fork a network-capable GTK
+application to webasm is astounding, and we came nowhere close to a
+working proof-of-concept. After more checking whether the ecosystem for
+webmail had improved so that we might settle for an existing webmail
+solution, we discovered that more webmail packages are being shelved
+than are released, and the options that remain are every bit as sketchy,
+at least from our hindsight, as the software we ditched in 2025.
+
+So, with all alternatives exhausted... we decided to write our own.
+
+ANNOUNCING "COCK-MAIL"
+
+Cock-mail addresses the concerns we had with pre-existing webmail
+solutions and allows for rapid development of our own webmail software.
+Its defining feature is that it talks directly to the IMAP server over
+websockets with no other intermediary. The client is a single 44kb HTML
+file.
+
+This announcement coincides with the first public release, 0.0.1
+(alpha), which is live on <https://mail.cock.li/> now. This is the very
+definition of "minimum viable product" and many major features are
+missing including SMTP. Still, it's better than nothing at all, and
+we're excited to restore webmail functionality to cock.li.
+
+WHAT HAPPENS NOW?
+
+Development of cock-mail is ongoing. You can view the "FUTURE PLANS"
+section of the login screen to see what we're doing, but the general
+order looks like this:
+
+1. Minimum IMAP client                      (0.0.x alpha)
+2. Minimum SMTP client                      (0.x.x beta)
+3. Minimum Sieve (mail filter) application  (1.x)
+4. IMAP/SMTP/Sieve improvements
+
+We hope you enjoy.
+
+If you'd like to support our work, we have re-opened donations:
+<https://cock.li/donate.php>
+
+Donate to TEAMSAFU:
+                                                                                            d(o_ od)
+    Monero:  49ekZHehQWCe6UbFTMqGwkcNMRyMx8V6FaZTM1G7QEUxEHS7M1Bmgt9hBKSCCCXmMBKvJcPT4oamVfqmYnVKQiUgA64AJqM
+    Bitcoin: bc1qv46vwuvyjgm3lvryqqu8yffkq75wvyrj0pa8dk
+
+Donate to SERVICESAFU:
+                                                                                            d(o_ od)
+    Monero:  42kBkLJXAbW3oshH3v6hoqGf9scwBjzcZ6vwAoVydvmaNnjWVrMyX9X5echPZrN8LjKUGFSxELeQEQm5uFx8ujG73mWm3wj
+    Bitcoin: bc1q49een6csh0edk4qyh0t5knrc9j6gnwnh0mlhfq
+
+~!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!~
+
+15 July 2025
+
+Two new GPG keys have been released today. First, the Cock.li Master
+Signing Key, which will be used offline to sign official cock.li GPG
+keys.
+
+The new Cock.li Administration Team key is signed by this master key,
+and will be used for all public site functions.
+
+Read about it here: https://cock.li/gpg/change.asc.txt
+
+Master key: F205A15E3C0637B67ADF1B9F8583C0C99879E9
+            https://cock.li/gpg/master.asc.txt
+Team key:   DFCC3289D67E8833DD213727543D4A322881A5
+            https://cock.li/gpg/cat.asc.txt
+
+~!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!~
+
+16 June 2025
+
+Cockleaks! Roundcube Exposes 1M Login Times, 93k Contacts, and More!
+
+If you ever used webmail, you should change your password just in case.
+Oh, and Webmail is gone, but you'll have to scroll to yesterday to read
+about that.
+
+You can appreciate the timing, can't you? Well, immediately after
+posting our announcement that Roundcube is gone from cock.li for good,
+we received word that two tables from cock.li's Roundcube database is
+on offer for sale online.
+
+The hacker reports they took the `users` and `contacts` tables. We were
+immediately able to confirm the validity of the leak based on the column
+count and samples provided.
+
+Here's what those tables contained:
+
+1. ~1,023,800 users, everyone that logged into webmail since 2016, and
+              their:
+              -e-mail address
+              -first webmail login timestamp
+              -last webmail login timestamp
+              -failed login timestamp and counter
+              -language
+              -a serialized representation of your preferences, which
+               includes anything you saved into roundcube itself like
+               all of your settings and your signature
+2. ~93,000    contact entries from ~10,400 users, including their:
+              -name
+              -email
+              -vcards
+              -comments
+
+The ~10,400 users with contacts in the leak will be sent a second e-mail
+to inform them.
+
+Here's what was not leaked to our knowledge:
+1.             passwords
+2.             e-mails
+3.             IP addresses
+4.             the data of anyone who never used webmail
+
+Passwords were stored in the `sessions` table, which is apparently not
+included in the leak. There was no functioning "Remember me" feature on
+cock.li's webmail so this would have included the password of anyone
+actively logged into webmail. About 350 at any time.
+
+Still, anyone who used webmail since 2016 should change their password.
+
+The leak is being offered for a hefty price. Someone tell Troy we'll
+send him the usernames ourselves for HIBP if he can prevent Cloudflare
+from blocking @cock.li etc* from search on that site when using Tor >:(
+
+* curl -s https://cock.li/log.txt | tail -20 # get cock.li domains ez
+                                               OR just turn this off
+                                               completely why do you
+                                               need to block that
+                                               search field anyway
+                                               WHAT ARE YOU WORRIED
+                                               THEY WILL FIND
+
+This is the part where you're expecting a root cause analysis, incident
+response, etc. Our guess is CVE-2021-44026 (potential SQL injection)
+which affected <1.4.12, a version cock.li stopped using long ago. It's
+possible this data has been held onto for a while. If we match up the
+columns and get a guess of when this incident occurred you'll get an
+update on <https://mail.cock.li/> and <https://cock.li/log.txt>.
+
+There's hardly much more incident response to be done than what's been
+written here. We removed Roundcube from the service just before
+learning about this leak. For now the most secure webmail we know of is
+nothing.
+
+One burning question: Could we have prevented this leak by updating
+Roundcube faster? Probably! We also could have upgraded to the branch
+with RCE, but don't let that rain on your pitchforks. We could solve
+this unknown by determining the exact means of exfiltration, but we have
+already done extensive research on Roundcube and we would rather just
+take the blame and save the time.
+
+Cock.li should not have been running Roundcube in the first place. For
+the most part, our choice in software has reflected the fact that e-mail
+has been mostly unchanged for over 40 years. There is no need to get
+fancy. It's e-mail.
+
+The lessons we've learned here will be the foundation for our decisions
+moving forward. We're deeply sorry for this incident. Over time I'm sure
+you will find this to be an exception to an otherwise cautious security
+philosophy and structure.
+
+~!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!~
+
+15 June 2025
+
+Cock.li Removes Roundcube After Finding Vulnerable PHP Code From 2005
+
+A recent vulnerability in Roundcube, the webmail software cock.li uses,
+has been exploited by hackers to obtain remote code execution on
+thousaunds of web servers running this e-mail software. This exploit was
+sold on hacking forums and has now been made public.
+
+After quarantining the relevant server and investigating the damage, we
+discovered that... the vulnerability does not appear to be exploitable
+on 1.4.15 and 1.4.x, despite public reports to the contrary. The data we
+quarantined showed no signs of intrusion or successful exploitation.
+
+So, our lazy decision to run this end-of-life branch saved us this time,
+but it could have easily gone different. We will learn carefully from
+this near miss.
+
+Not to excuse the delay in updating you, we have been investigating this
+vulnerability, the security of Roundcube, and our options for the future
+of webmail on cock.li. All your questions will now be answered.
+
+                           TECHNICAL FINDINGS
+                           ------------------ 
+
+The original research[0] of CVE-2025-49113 points out this particular
+line in rcube_session.php: function unserialize() (line 539):
+[0] <https://fearsoff.org/research/roundcube> 
+
+513     /**
+514      * Unserialize session data
+515      * 
+    https://www.php.net/manual/en/function.session-decode.php#56106
+516      *
+517      * @param string $str Serialized data string
+518      *
+519      * @return array|false Unserialized data
+520      */
+521     public static function unserialize($str)
+522     {
+523         $str = (string) $str;
+524         $endptr = strlen($str);
+525         $p = 0;
+526
+527         $serialized = '';
+528         $items = 0;
+529         $level = 0;
+530
+531         while ($p < $endptr) {
+532             $q = $p;
+533             while ($str[$q] != '|') {
+534                 if (++$q >= $endptr) {
+535                     break 2;
+536                 }
+537             }
+538
+539*            if ($str[$p] == '!') {
+540                 $p++;
+541                 $has_value = false;
+542             } else {
+543                 $has_value = true;
+544             }
+545
+546             $name = substr($str, $p, $q - $p);
+547             $q++;
+
+The author makes a couple observations:
+
+1. There is nothing about this function or an "!" in the link provided.
+
+2. What the hell is "!" doing there anyway?
+
+Without knowing its origin, the author correctly points out the lack of
+bounds checks on the condition which (when provided with an unsanitized,
+user-provided value..) allows for the object insertion and RCE reported.
+
+To operate the link provided, and to truly understand the issue, you
+will need to go back. WAY back. Ahem.
+
+<https://web.archive.org/web/20050830233915/https://www.php.net/manual/e
+n/function.session-decode.php>
+
+Yep. Someone writing from a french public e-mail host wrote this in 2005
+and Roundcube has been running it since 2009. See:
+<roundcubemail#617b4f699f>. The author is "svncommit" and apparently the
+subversion repository went private in 2006.
+
+Is that all? Nope. Apparently the use case for this function is to fix
+an issue present in 2005 PHP's native session_decode() handling of
+"reserved chars", as well as to allow deserialization of data outside of
+sessions. It's unknown if that issue is still present 20 years later.
+Instead of getting lost in the sauce here, let's answer the other
+question: What is "!" doing there?
+
+To do that, we'll turn to PHP's source code. in
+<php#master>ext/session/session.c, there's no mention of it anymore.
+PHP now uses binary decoding only and has PS_BIN_UNDEF:
+
+981     #define PS_BIN_UNDEF (1<<(PS_BIN_NR_OF_BITS-1))
+
+But when you roll back the clock to around the time this function was
+added<php#525f3c4793a6>, you see it there:
+
+761     #define PS_UNDEF_MARKER '!'
+
+So "!" is actually PS_UNDEF_MARKER and denotes a null value. This same
+name was used in the 2005 php.net post, but it was replaced with a
+static value in Roundcube. Otherwise, PS_SERIALIZED_DECODE_FUNC follows
+nearly identically with the PHP code above.
+
+And so, does this commit of PHP have the same vulnerability? Yes, it
+does. Reported as CVE-2010-3065 and MOPS-2010-060: PHP Serializer
+Session Data Injection Vulnerability, this same issue was fixed on
+2010-04-26 at <php#3c78ad763ebb>, and released in PHP 5.2.14 and 5.3.3.
+
+Turning back to Roundcube, how close is the current unserialize()
+function to the 2005 reproduction?
+
+The loop style, capitalization, indentation, and spacing has all been
+changed. "!" and "|" are written inline. Syncing all of that up is a
+painstaking process but yields the following diff between roundcube's
+unserialize($str) and bmorel's 2005 session_real_decode($str):
+
+32c32
+< switch (strtolower($str[$q])) {
+---
+> switch ($str[$q]) {
+47c47
+< $serialized .= 'R:' . (intval($id) + 1) . ';';
+---
+> $serialized .= 'R:' . ($id + 1) . ';';
+82c82
+< return unserialize('a:' . $items . ':{' . $serialized . '}');
+---
+> return @unserialize( 'a:' . $items . ':{' . $serialized . '}' );
+
+So, roundcube's unserialize function is functionally the exact same as
+this 2005 reproduction with the following improvements:
+
+1. Type identifiers are cast to lowerstring
+2. Reference values are cast to integers
+3. Error reporting is uninhibited
+4. "!" and "|" are written inline instead of assigned to variables like
+   PS_UNDEF_MARKER
+
+Well, with that out of the way we can now finally tell a more complete
+story of the issue.
+
+Drumroll please................
+
+Roundcube's CVE-2025-49113 happened because 1.5.x and 1.6.x got a shiny
+new unsanitized user input "_from", which got passed to
+rcube_session.php:unserialize(), a 2005 rehash of PHP's own
+session_decode() added to Roundcube by "svncommit" in 2009. The version
+of PHP the rehashed function was based on is vulnerable to
+CVE-2010-3065, and the rehashed function in Roundcube was never updated.
+PHP now uses binary serialization only, and Roundcube added sanitization
+to prevent the vulnerable code from being exploited.
+
+                           WHERE IS WEBMAIL?
+                           -----------------
+
+Cock.li will no longer be offering Roundcube webmail. Regardless of
+whether our version was vulnerable to this, we've learned enough about
+Roundcube to pull it from the service for good.
+
+Another webmail is definitely on the table, but it is not an immediate
+priority for us. Maybe we'll get the one with the squirrel on it. Until
+then, it's time for you to learn a mail client.
+
+~!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!~
+
+2025-04-04
+
+Cock.li links donated e-mail domain 'hitler.rocks' to two intelligence
+agencies, permanently removes it from registration
+
+Hello, cock.li is back again.
+
+Cock.li's administration team has identified connections between the
+registration and addition to cock.li of the domain `hitler.rocks` and
+two intelligence agencies who directly benefited from its association to
+the service. The administration team is declining to name the agencies
+or individuals.
+
+Cock.li has provided free e-mail service to Internet users since 2013.
+Its assortment of shock domains has provided immeasurable comedic value
+to e-mail users worldwide, much to the shagrin of people with no funny
+bones. The domain itself has never ever mattered, what's always mattered
+is whether it could make us laugh when we imagine a friend receiving an
+e-mail and reading the domain aloud.
+
+Case in point: The domain `horsefucker.org` was added before anyone
+remotely associated with cock.li realized its origins are from a
+community that watches My Little Pony porn. We've carried that clop for
+all these years because even after realizing its true origins, the story
+of this domain only got funnier.
+
+The story of `hitler.rocks` did not get funnier when we uncovered its
+origins.  After a thorough investigation which has taken place over the
+last several years, we've concluded it is extremely likely that
+`hitler.rocks` was originally offered to cock.li as a poison fruit
+intended to destabilize the service. And we are certain that the same
+agencies who were in a position to execute such an operation took every
+advantage of its association to cock.li, including threatening to
+associate the domain with unrelated parties in order to convince them to
+antagonize our service in various acts of cowardice.
+
+In addition to threats, these same agencies are connected to actual
+attacks against the service. One individual associated with
+`hitler.rocks` and later connected to the identified agencies admitted
+to signing cock.li's abuse mailbox up for thousands of mailing lists,
+resulting in millions of spam e-mails and a measurable and permanent
+decrease in our efficiency in processing abuse reports.
+
+We've long known that domains like `hitler.rocks` can lead to confusion
+of our values and have the potential for misuse. Clarifying those values
+would be like explaining the joke, so if you are still confused why we
+found the domain funny enough to host e-mail on, maybe you could
+understand that cock.li was never supposed to get so big that you would
+see it in the first place. We also don't give a shit what you find funny
+or not.
+
+As a result of our investigation, we've decided that tainted domains
+like `hitler.rocks` which we conclude were offered to the service
+maliciously will never be available for registration again, and may be
+subject to a future sunset period and service closure. Most of the other
+domains which disappeared from registration at the same time are either
+not funny enough to re-add, or are still subject to their own
+investigation.
+
+Any complaints about not naming the intelligence agencies responsible
+are valid. The investigation and disclosure could have been quicker,
+too. Sorry.
+
+One of the best domains on cock.li, `nigge.rs`, was wrongly subjected to
+this same treatment and has been closed for registration for several
+years. Cock.li stands no longer for the baseless discrimination of this
+strong and independent domain. So, it is our pleasure to announce that
+`nigge.rs` is available for immediate public registration once again.
+
+It's our hope by making this announcement you will be better informed of
+one of the mechanisms that shape the course of speech online. Anyone
+intending to disrupt cock.li in the future should be warned we will
+patiently dig at the roots of your operation until we uncover its most
+basic attacks on human rights. But as of now we at cock.li should
+hopefully have the closure we need to heal from this mess and move
+forward with our work on the service.
+
+ALERT STATUS: GREEN
+
+~!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!~
+
+2024-12-16
+
+Good news: cock.li's RED ALERT has been reduced to an ORANGE ALERT,
+thanks to tangible progress on many internal issues.
+
+~!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!~
+
+2024-12-02
+
+Thank you very much for your gracious support to cock.li over the last
+few weeks. The cock.li team wants you to know that your donations have
+allowed us to place fighting for cock.li as our top priority.
+
+This new era for cock.li means you can rest assured that we will make
+efforts to keep our userbase updated on the current happenings to the
+maximum extent possible. Cock.li started as a hobby project, and was
+slowly neglected over the years as upkeep mounted while interest in the
+project waned. Now that engaged people are working on the site every day
+again, you should expect that you will have some descriptions of the
+work that's going on, i.e. where your money is going.
+
+If it seems like work is currently slow, that's because most of the
+required work is in the background, and it would be unwise to detail it
+at this point.  Some day, our work will be less serious, and the quality
+of updates should improve further.
+
+Until then, I hope you will appreciate this list of our current
+priorities:
+  ------ High priority
+  1.  RED ⟶ ORANGE alert (top priority)
+  2.  Regular maintenance
+  3.  Restore password changes
+  4.  Finish DNS migration and expansion
+  5.  Hardware maintenance & security
+  6.  New website with all features
+  ------ Medium priority
+  1.  Updates
+  2.  E-mail deliverability
+  3.  Financial reports
+  4.  Reimbursement calculations (for many $100s of bills not paid by
+      cock.li over many years)
+  5.  Mail storage improvements
+  6.  New PGP keys
+  7.  Status page
+  8.  Update feeds (TXT+RSS)
+  9.  Team contacts
+  10. Monitor improvements
+  ------ Low priority / Future work
+  1.  Writing about cock.li (its history, tech, and philosophy)
+
+Of course, these priorities will change as our work develops and our
+minds wander. This list should be updated as needed.
+
+Thanks again for your support. Back to work!
+
+-Team cock.li
+
+~!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!~
+
+Donate to cock.li
+
+Cock.li maintains two types of funds: SERVICESAFU and TEAMSAFU, used for
+operating and staffing costs, respectively. There are two funds because
+for over 10 years, no one directly related to cock.li was allowed to be
+paid for their work on it. TEAMSAFU is our solution to allow us to get
+paid for our work on cock.li, and there's much work to be done.
+
+## SERVICESAFU
+
+SERVICESAFU is cock.li's operating expense fund. Expenses paid from this
+fund include costs for hosting, legal, domain registration, and
+contingencies.
+
+This fund is still spending donations made 5 years ago, and should be
+well-funded even for the current red alert. But if you want to know your
+donation will be spent in the safest manner, this is where you send it.
+
+The donations and expenses related to the Bitcoin wallets of SERVICESAFU
+are disclosed in cock.li's financial reports (which haven't been updated
+in 3 years, but will be "some day")
+
+                                                                                            d(o_ od)
+Monero: 44vHmnRmhcXiqq348LPGwxSPfvrN4pAKzb1GypnQn65c824N9MsKk2Z5okYCUieYy58u2DYHT4HToK1hXuqnk7QdNfe3nLL
+Bitcoin: bc1q4pxl6727zj0s37zarhu20lsg72ac3htvlsv52l
+
+## TEAMSAFU
+
+The SERVICE can't be SAFU if the TEAM isn't. In contrast to the service
+fund, TEAMSAFU allows our team to be paid for their work on cock.li, or
+for any purpose we see fit.
+
+Donations to this fund will directly encourage us to continue our work
+on the service. Its donations and expenses are not included in cock.li's
+financial reports, but the Bitcoin wallets can be publicly analyzed on
+the "block chain".
+
+                                                                                            d(o_ od)
+Monero: 41fqXKYNEWuBDuqYczhoSiE1aUN9tCGdWYrfjynebuTM3tdE5UUHEfeZjZ3iZpgqY8LdYLk9h4As66UBC5mARL4z98PfUwB
+Bitcoin: bc1qg9ehmfzusgfd6dvudll0qxkcl8c5q3sh8qnetr
+
+~!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!~
+
+Red alert updates:
+ - memes
+ - More DNS servers are being added and the old server will be removed.
+ - Everything was down for about 24 hou-MULTIPLE DAYS AND COUNTING due
+   to upstream datacenter outage affecting DNS, and the disk
+   *disappearing* when the host came back. Uh oh.
+ - Red -> Orange Alert soon hopefully.
+ - My fellow retards: cock.li has not "shut down". You may need to read
+   more than the first line.
+ - Anyone suggesting you migrate your account to Gmail, Yahoo, Proton,
+   etc. should not have been using cock.li in the first place.
+   Normalfags get off my fucking board.
+ - Feel free to migrate, I don't have any good suggestions though. Try
+   that on Proton!
+ - PW changes and maybe registration will be back within a "couple
+   days".
+
+~!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!~
+
+COCK.LI IS ON RED ALERT.
+Date posted: 2024-11-12
+
+🚨 COCK.LI IS ON RED ALERT.
+
+Cock.li will shut down before becoming complicit in crimes against its
+own userbase under duress of any government or organization.
+
+For nearly 11 years, cock.li has remained one of the only public e-mail
+providers to allow registration as anonymously as a library card. The
+fact that it's still possible to get an e-mail address as easy as 20
+years ago is a fact widely *hated* by international governments; at
+least the parts of those governments which have dedicated countless
+resources to target our service, our team, our family, and our friends
+with illegal surveillance, bad-jacketing, organized disinformation, and
+much worse.
+
+A combination of these illegal tactics have become so serious that the
+site is now in grave danger.
+
+The only way it's been possible for cock.li to weather this and stay
+online is thanks to the dedication of our entire lives to this bit. Our
+small team of 3-5 people have had our lives permanently altered and our
+stability sacrificed so Internet users worldwide can more-or-less enjoy
+the comfort of being able to access e-mail without requiring a phone
+number or other surveillance document.
+
+Despite the constant attacks on the service and our personal lives, no
+one directly involved has ever been paid in 11 years for their work on
+cock.li. The personal costs of this volunteer work add up over a
+lifetime, and as we get older we've slowly taken steps back to
+compensate, when we should have been stepping up.
+
+Stepping up is exactly what's needed right now, and we're here to do it.
+These recent issues have forced us to take leave from our jobs to make
+time just to keep the wheels spinning. I hope you can understand that is
+why, for the first time ever, I'm asking you to donate directly to the
+people who make cock.li possible.
+
+Your donation will make a real difference by telling us to use the money
+where it will help the most right now. We have a sizable war chest for
+legal expenses that has never once been used to pay us for our work.
+Problem is, if we can't make time to put that war chest to work, what
+good is it? We believe cannibalizing this fund to offset our lost time
+would put cock.li in a worse position, so by creating a new fund we can
+make it clear what we're doing while keeping our legal funds secure.
+
+It shouldn't surprise you that the people who are so passionate about
+this service are not profiteers or business people. We are private,
+unpaid individuals who don't want to see one of the last great liberties
+of this Internet fall victim to the criminal and violent attempts to
+shut it down. If these critical threats force us to change the world to
+ensure e-mail remains recognized as a human right, we won't hesitate to
+do it.
+
+We never once asked for personal donations specifically in the hopes
+that if this moment ever came, our userbase would appreciate that we
+were able to make it this long on passion alone, and trust that your
+donation will make the best possible impact.
+
+There is much work to be done. I will keep you updated as much as I can.
+Thank you very much for your consideration.
+
+~!~
+
+Fun facts about cock.li:
+
+User count: ~1,400,000
+
+Established: 2013
+
+Domains:
+cock.li
+airmail.cc
+420blaze.it
+aaathats3as.com
+cumallover.me
+nigge.rs
+horsefucker.org
+national.shitposting.agency
+tfwno.gf
+cock.lu
+cock.email
+firemail.cc
+memeware.net
+cocaine.ninja
+waifu.club

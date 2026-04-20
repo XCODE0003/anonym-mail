@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  # Test PHP container with isolated database
+  php:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: anonym-mail-test-php
+    environment:
+      - APP_ENV=testing
+      - APP_DEBUG=true
+      - DB_HOST=postgres-test
+      - DB_PORT=5432
+      - DB_NAME=mailservice_test
+      - DB_USER=mailservice
+      - DB_PASSWORD=test_password
+      - REDIS_HOST=redis-test
+      - REDIS_PORT=6379
+      - PRIMARY_DOMAIN=test.localhost
+      - BRAND_NAME=Test Mail
+    volumes:
+      - ./app:/var/www/app
+      - ./webmail:/var/www/webmail
+      - ./admin:/var/www/admin
+    depends_on:
+      - postgres-test
+      - redis-test
+    networks:
+      - test
+
+  # Isolated test database
+  postgres-test:
+    image: postgres:16-alpine
+    container_name: anonym-mail-test-postgres
+    environment:
+      - POSTGRES_DB=mailservice_test
+      - POSTGRES_USER=mailservice
+      - POSTGRES_PASSWORD=test_password
+    tmpfs:
+      - /var/lib/postgresql/data
+    networks:
+      - test
+
+  # Isolated test Redis
+  redis-test:
+    image: redis:7-alpine
+    container_name: anonym-mail-test-redis
+    command: redis-server --appendonly no --save ""
+    tmpfs:
+      - /data
+    networks:
+      - test
+
+  # Mock mail receiver for integration tests
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: anonym-mail-test-mailhog
+    ports:
+      - "8025:8025"  # Web UI
+    networks:
+      - test
+
+networks:
+  test:
+    driver: bridge

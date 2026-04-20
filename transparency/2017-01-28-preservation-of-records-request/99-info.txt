@@ -1,0 +1,13 @@
+The last preservation of records request received by the U.S. government[0] was
+immediately followed by the seizure of cock.li's hard drives[1] by the hands of
+the U.S. government[2]. I complied with this original request in good faith
+since it wasn't a request for records and I legitimately desired to aid the
+investigation. I legitimately desire to aid this investigation as well; however,
+due to this unfortunate precedent, I will not be complying with this request
+for preservation. The U.S. DOJ is welcome to follow the normal channels of
+obtaining either a subpoena or a warrant for the requested user's metadata or
+data, respectively.
+
+[0] https://cock.li/transparency/2015-12-18-preservation-of-records-request/
+[1] https://archive.fo/v0F7U
+[2] https://my.mixtape.moe/wzzioc.pdf

@@ -1,0 +1,152 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+LIBERTY CANARY
+
+Cock.li is in 100% control of all of its hardware, and the service is operating
+normally.
+
+Cock.li will shut down before becoming complicit in crimes against its own
+userbase under duress of any government or organization.
+
+Cock.li is not under duress of any government or organization.
+
+~!~
+
+WARRANT CANARY
+
+- From 2017 to 18 April 2026 17:18:01 UTC, cock.li has not received:
+
+ * A gag order preventing the disclosure of a broad order for user metadata
+ * A gag order preventing the disclosure of a broad order for user data
+ * A gag order preventing the disclosure of a targeted order for user data
+ * A gag order preventing the disclosure of a targeted order for user metadata
+
+Cock.li has never received a legal order enforceable in its jurisdiction for
+user data.
+
+Cock.li has never received a legal order enforceable in its jurisdiction for
+any broad class of users.
+
+Cock.li has never received a gag order preventing disclosure of any broad
+order.
+
+A gag order refers to any legal order enforceable in cock.li's jurisdiction
+preventing disclosure of:
+ * A request or order for user information
+ * A request or order for investigative assistance
+ * A request or order for technical assistance
+ * Any other request, order, demand, or information of any type
+
+Failure to update this canary does not mean cock.li has received a gag order,
+nor is not updating it or omitting anything an attempt to communicate anything
+to anyone. This canary serves only to periodically confirm certain facts as
+long as they are true.
+
+~!~
+
+The current datetime:
+18 April 2026 17:18:01 UTC
+The most recent bitcoin block hash:
+000000000000000000002c78c2fc14a8a71a7d68a31e049cae61b1d4156f62aa
+
+Until further notice, THIS CANARY SHOULD BE UPDATED EVERY 72 HOURS. Under no
+circumstances should we let this canary go 96 hours without an update unless a
+PGP-signed message changes the schedule.
+
+~!~
+
+We <3 LL
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE38wyidZ+iDPdITcnVD1KMiiBpbYFAmnjvMkACgkQVD1KMiiB
+pbaGNxAAsM+R23+qPVVSSIFHD208dzOgyun2EwGATRMA9snSb5ND5lzuXbqysnEs
+QnooqnFLMD2AdmXR4WncWYesYlxxPks9n+mSfq9X5S35HFHawpC+csEBmdDMWtDJ
+RGtjZD0jUlzz1/8xlLpPdPqAYa630vStvxbT0iTU2xUtH14ZjQakRkIq1zlTHjOM
+CxZ4mY/11JRHqatw/5SNG7gN4YEQoE4d4EjuKaezyyAqa1caNvdgoKKvBgvBQsRk
+4knCcL86FEcISwfubnCg/SW04L8tKz/oXHH/ydeo9PoVbt2CrvGjjcH7mbQjOyAp
+EB8oPXAiCAv0cobFfJA5SBWGkvy0J81SQ5dBmbYKY5aSSzTSMhj6BGpC86lIWJWA
+R7MPKY8Dk04FWjpxIZDwprUJIgLrYiLhQroZ01ecZheCLwQm2RczTKg111EDMakS
+BQDT0RMZoqa37qlM4BGFSLOEC2572OmPMwem6s//MzZ43U12SQL02iyhFgZyW3Ll
+UZkFpIXDH/sGCTd9iOaUbgWnhH/pXCsIWNIYWoo3hSg14Qtm0a/Aeq1TBs6DRsdP
+5Bimhp+g1LhI63VMeELmsC5EOeDJlKjIm7InxMZBcpSN/wpTGz7HbQO8hH7bYIk4
+ASAxnN8G9HTbN5/65SLfeDJkgnzba1KrpJEArFWu/DbOPEdcToE=
+=IzHH
+-----END PGP SIGNATURE-----
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+Comment: Cock.li Administration Team ...DD213727543D4A322881A5B6
+
+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
+=xRnB
+-----END PGP PUBLIC KEY BLOCK-----

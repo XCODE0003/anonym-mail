@@ -1,0 +1,20 @@
+Return-Path: <mhuntley@wilco.org>
+X-Original-To: vc@cock.li
+Delivered-To: vc@cock.li
+From: Mark Huntley <mhuntley@wilco.org>
+To: Vincent Canfield <vc@cock.li>
+Subject: RE: Subpoena
+Date: Wed, 4 Nov 2015 21:05:58 +0000
+Message-ID: <85b168aa67954f52a299dc2a33265ed0@wcmail14.wilco.org>
+References: <4e4c8331d1874123bdc00afdb2163c9e@wcmail14.wilco.org>
+ <563A4058.2040609@cock.li> <8B92E929-A2D7-4B38-AC49-BAE1032F2A70@wilco.org>
+ <563A47E9.2050305@cock.li>
+ <821e2af25fc84d38b1d7dc086f762d3c@wcmail14.wilco.org>
+ <563A66EA.4000509@cock.li>
+In-Reply-To: <563A66EA.4000509@cock.li>
+
+You can acknowledge that you received a subpoena and were responsive to it.  This subpoena did not have a clause prohibiting you from notifying the target, but we do request that you do not notify the target.  If it is your policy to publish a subpoena then feel free to do so (username redacted).  As far as a Grand Jury is concerned, you are a Custodian of Records (COR) related to the email records requested.  
+
+If you have any other questions. Please feel free to reach out.
+
+Thanks,

@@ -1,0 +1,9 @@
+# Virtual alias maps lookup (for +tag subaddressing)
+
+hosts = postgres
+user = mailservice
+password = ${DB_PASSWORD}
+dbname = mailservice
+
+# Maps user+tag@domain to user@domain
+query = SELECT CONCAT(u.local_part, '@', d.name) FROM users u JOIN domains d ON u.domain_id = d.id WHERE u.local_part = '%u' AND d.name = '%d' AND u.frozen = false

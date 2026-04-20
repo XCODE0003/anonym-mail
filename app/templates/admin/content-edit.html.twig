@@ -1,0 +1,20 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block content %}
+<h2>Edit: {{ block.key }}</h2>
+
+<div class="card">
+    <form method="POST" action="/admin/content/{{ block.key }}">
+        <input type="hidden" name="csrf" value="{{ csrf_token }}">
+        <input type="hidden" name="csrf_valid" value="{{ csrf_token }}">
+        
+        <div class="form-group">
+            <label for="body_md">Content (Markdown)</label>
+            <textarea id="body_md" name="body_md" rows="15" style="font-family: monospace;">{{ block.body_md|default('') }}</textarea>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a href="/admin/content" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

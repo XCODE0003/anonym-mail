@@ -1,0 +1,38 @@
+{% extends 'layout.html.twig' %}
+
+{% block body_class %}page-abuse{% endblock %}
+
+{% block content %}
+<h1>Report Abuse</h1>
+
+<p>If you have received spam or abusive content from our service, please report it.</p>
+
+<h2>How to Report</h2>
+
+<p>Send an email to <strong>abuse@{{ primary_domain }}</strong> with:</p>
+
+<ol>
+    <li>Full email headers of the abusive message</li>
+    <li>Description of the abuse (spam, harassment, phishing, etc.)</li>
+    <li>Any other relevant information</li>
+</ol>
+
+<h2>Response Time</h2>
+
+<p>We review all abuse reports within 48 hours.</p>
+
+<h2>What Happens Next</h2>
+
+<p>If we confirm abuse, we will take appropriate action which may include:</p>
+
+<ul>
+    <li>Warning the user</li>
+    <li>Suspending SMTP access</li>
+    <li>Terminating the account</li>
+</ul>
+
+<h2>Privacy Note</h2>
+
+<p>We do not disclose user information to third parties except when required by law. 
+See our <a href="/transparency/">Transparency Reports</a> for details on any legal requests we have received.</p>
+{% endblock %}

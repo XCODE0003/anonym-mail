@@ -1,0 +1,52 @@
+# Tor Hidden Service Configuration
+# Provides .onion addresses for web, webmail, and SMTP
+
+# Log to /dev/null for privacy
+Log notice file /dev/null
+
+# Data directory
+DataDirectory /var/lib/tor
+
+# SOCKS port (disabled - we only need hidden services)
+SocksPort 0
+
+# ============================================================================
+# Hidden Service: Web (public site)
+# ============================================================================
+HiddenServiceDir /var/lib/tor/hidden_service_web/
+HiddenServiceVersion 3
+HiddenServicePort 80 nginx:8080
+
+# ============================================================================
+# Hidden Service: Webmail
+# ============================================================================
+HiddenServiceDir /var/lib/tor/hidden_service_webmail/
+HiddenServiceVersion 3
+HiddenServicePort 80 nginx:8081
+
+# ============================================================================
+# Hidden Service: SMTP (submission)
+# ============================================================================
+HiddenServiceDir /var/lib/tor/hidden_service_smtp/
+HiddenServiceVersion 3
+HiddenServicePort 25 postfix:25
+HiddenServicePort 587 postfix:587
+
+# ============================================================================
+# Hidden Service: IMAP
+# ============================================================================
+HiddenServiceDir /var/lib/tor/hidden_service_imap/
+HiddenServiceVersion 3
+HiddenServicePort 993 dovecot:993
+HiddenServicePort 143 dovecot:143
+
+# ============================================================================
+# Security Settings
+# ============================================================================
+
+# Don't act as a relay
+ORPort 0
+DirPort 0
+
+# Client connections only through hidden services
+ExitPolicy reject *:*

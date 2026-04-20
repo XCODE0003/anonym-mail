@@ -1,0 +1,56 @@
+{% extends 'webmail/layout.html.twig' %}
+
+{% block content %}
+<div class="folder-header">
+    <h1>{{ current_folder }}</h1>
+    <span class="message-count">{{ total_messages }} messages</span>
+</div>
+
+{% if messages|length > 0 %}
+<table class="message-list">
+    <thead>
+        <tr>
+            <th class="col-from">From</th>
+            <th class="col-subject">Subject</th>
+            <th class="col-date">Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for msg in messages %}
+        <tr class="{% if not msg.seen %}unread{% endif %}">
+            <td class="col-from">
+                <a href="/webmail/message/{{ current_folder|url_encode }}/{{ msg.uid }}">
+                    {{ msg.from|e }}
+                </a>
+            </td>
+            <td class="col-subject">
+                <a href="/webmail/message/{{ current_folder|url_encode }}/{{ msg.uid }}">
+                    {{ msg.subject|default('(No Subject)')|e }}
+                </a>
+            </td>
+            <td class="col-date">
+                {{ msg.date|date('M j') }}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% if total_pages > 1 %}
+<nav class="pagination">
+    {% if page > 1 %}
+    <a href="/webmail/folder/{{ current_folder|url_encode }}?page={{ page - 1 }}" class="btn btn-secondary btn-sm">Prev</a>
+    {% endif %}
+    <span class="page-info">{{ page }} / {{ total_pages }}</span>
+    {% if page < total_pages %}
+    <a href="/webmail/folder/{{ current_folder|url_encode }}?page={{ page + 1 }}" class="btn btn-secondary btn-sm">Next</a>
+    {% endif %}
+</nav>
+{% endif %}
+
+{% else %}
+<div class="empty-folder">
+    <p>No messages</p>
+</div>
+{% endif %}
+{% endblock %}

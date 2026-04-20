@@ -1,0 +1,31 @@
+# Anonym Mail — Privacy header checks
+# Remove all identifying information from outgoing mail
+
+# Remove Received headers (contains IP addresses)
+/^Received:/                    IGNORE
+
+# Remove User-Agent headers
+/^User-Agent:/                  IGNORE
+/^X-Mailer:/                    IGNORE
+
+# Remove originating IP headers
+/^X-Originating-IP:/            IGNORE
+/^X-Source-IP:/                 IGNORE
+/^X-Forwarded-For:/             IGNORE
+/^X-Real-IP:/                   IGNORE
+
+# Remove MUA identification
+/^X-MimeOLE:/                   IGNORE
+/^X-MSMail-Priority:/           IGNORE
+/^X-MS-Has-Attach:/             IGNORE
+/^X-MS-TNEF-Correlator:/        IGNORE
+
+# Remove authentication results (may leak server info)
+/^Authentication-Results:/      IGNORE
+
+# Remove spam scores (internal use only)
+/^X-Spam-Status:/               IGNORE
+/^X-Spam-Score:/                IGNORE
+/^X-Spam-Flag:/                 IGNORE
+/^X-Spam-Level:/                IGNORE
+/^X-Rspamd-.*:/                 IGNORE

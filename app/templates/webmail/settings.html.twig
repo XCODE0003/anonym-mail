@@ -1,0 +1,48 @@
+{% extends 'webmail/layout.html.twig' %}
+
+{% block content %}
+<div class="settings-view">
+    <h1>Settings</h1>
+    
+    <section class="settings-section">
+        <h2>Account</h2>
+        <dl>
+            <dt>Email</dt>
+            <dd>{{ user.email }}</dd>
+        </dl>
+    </section>
+    
+    {% if quota %}
+    <section class="settings-section">
+        <h2>Storage</h2>
+        <div class="quota-bar">
+            <div class="quota-used" style="width: {{ quota.percent }}%"></div>
+        </div>
+        <p class="quota-info">
+            {{ (quota.used / 1048576)|number_format(1) }} MB / {{ (quota.limit / 1048576)|number_format(0) }} MB
+        </p>
+    </section>
+    {% endif %}
+    
+    <section class="settings-section">
+        <h2>Actions</h2>
+        <ul class="settings-links">
+            <li><a href="/changepass">Change Password</a></li>
+        </ul>
+    </section>
+    
+    <section class="settings-section">
+        <h2>Email Client</h2>
+        <h3>IMAP</h3>
+        <dl>
+            <dt>Server</dt>
+            <dd>{{ primary_domain }}:993 (TLS)</dd>
+        </dl>
+        <h3>SMTP</h3>
+        <dl>
+            <dt>Server</dt>
+            <dd>{{ primary_domain }}:465 (TLS)</dd>
+        </dl>
+    </section>
+</div>
+{% endblock %}

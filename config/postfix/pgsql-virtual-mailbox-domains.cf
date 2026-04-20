@@ -1,0 +1,8 @@
+# Virtual mailbox domains lookup
+
+hosts = postgres
+user = mailservice
+password = ${DB_PASSWORD}
+dbname = mailservice
+
+query = SELECT name FROM domains WHERE name = '%s' AND active = true

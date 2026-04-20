@@ -1,0 +1,46 @@
+# Dovecot SQL authentication configuration
+
+driver = pgsql
+connect = host=postgres dbname=mailservice user=mailservice password=${DB_PASSWORD}
+
+# Password scheme
+default_pass_scheme = ARGON2ID
+
+# Password lookup
+password_query = \
+    SELECT \
+        CONCAT(u.local_part, '@', d.name) AS user, \
+        u.password_hash AS password \
+    FROM users u \
+    JOIN domains d ON u.domain_id = d.id \
+    WHERE \
+        u.local_part = '%n' \
+        AND d.name = '%d' \
+        AND u.frozen = false \
+        AND (u.delete_after IS NULL OR u.delete_after > CURRENT_DATE)
+
+# User lookup
+user_query = \
+    SELECT \
+        CONCAT('/var/mail/', d.name, '/', u.local_part) AS home, \
+        5000 AS uid, \
+        5000 AS gid, \
+        CONCAT('*:bytes=', u.quota_bytes) AS quota_rule \
+    FROM users u \
+    JOIN domains d ON u.domain_id = d.id \
+    WHERE \
+        u.local_part = '%n' \
+        AND d.name = '%d' \
+        AND u.frozen = false \
+        AND (u.delete_after IS NULL OR u.delete_after > CURRENT_DATE)
+
+# Iteration query (for quota checking, etc.)
+iterate_query = \
+    SELECT \
+        u.local_part AS username, \
+        d.name AS domain \
+    FROM users u \
+    JOIN domains d ON u.domain_id = d.id \
+    WHERE \
+        u.frozen = false \
+        AND (u.delete_after IS NULL OR u.delete_after > CURRENT_DATE)

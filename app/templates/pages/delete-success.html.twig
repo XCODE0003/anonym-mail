@@ -1,0 +1,25 @@
+{% extends 'layout.html.twig' %}
+
+{% block body_class %}page-delete-success{% endblock %}
+
+{% block content %}
+<div class="page-form">
+    <h1>Account Scheduled for Deletion</h1>
+    
+    <div class="message message-warning">
+        <p>Your account has been scheduled for permanent deletion.</p>
+        <p>It will be removed in <strong>{{ deletion_days }} days</strong>.</p>
+    </div>
+    
+    <p>During this period:</p>
+    <ul>
+        <li>You can still log in and access your emails</li>
+        <li>You can cancel the deletion by logging in to webmail</li>
+        <li>After {{ deletion_days }} days, all data will be permanently erased</li>
+    </ul>
+    
+    <div style="margin-top: 2rem;">
+        <a href="/" class="btn btn-secondary">Return Home</a>
+    </div>
+</div>
+{% endblock %}

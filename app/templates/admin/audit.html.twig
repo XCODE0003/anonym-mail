@@ -1,0 +1,30 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block content %}
+<h2>Audit Log</h2>
+
+<div class="card">
+    <table>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Admin</th>
+                <th>Action</th>
+                <th>Target</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for log in logs %}
+            <tr>
+                <td>{{ log.at }}</td>
+                <td>{{ log.admin_username }}</td>
+                <td>{{ log.action }}</td>
+                <td>{{ log.target|default('-') }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="4" style="text-align: center; color: var(--muted);">No logs</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

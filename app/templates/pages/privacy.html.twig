@@ -1,0 +1,22 @@
+{% extends 'layout.html.twig' %}
+
+{% block content %}
+<div class="page-form">
+    <h1>Privacy Policy</h1>
+    <div class="content-block">
+        <p><strong>We do not collect:</strong></p>
+        <ul class="trust-list">
+            <li>IP addresses</li>
+            <li>User agents</li>
+            <li>Referrer headers</li>
+            <li>Personal information</li>
+        </ul>
+        <p style="margin-top: 1rem;"><strong>We store:</strong></p>
+        <ul class="trust-list">
+            <li>Email address (username@domain)</li>
+            <li>Password hash (Argon2id)</li>
+            <li>Email messages (encrypted at rest)</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

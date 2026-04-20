@@ -1,0 +1,51 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+COCK.LI TRANSPARENCY REPORT, 2022Q1
+
+Greetings,
+
+In Q1 2022 (-ish) cock.li received and responded to two verified orders for user metadata enforceable in our jurisdiction (Seychelles) on behalf of French authorities. These orders are over 10 pages and are filled with high-quality investigative information. Due to the huge burden in translating and censoring the entire thing, and understanding the result would be mostly white pages, I've decided not to publish them. 
+
+Moving forward cock.li will continue disclosing any enforceable legal orders in either direct publish or this quarterly report format. Orders will be directly published unless it's likely to produce a similarly useless output. Any overreaching or stupid orders will be challenged, as usual.
+
+XOXOXO,
+Vincent Canfield
+
+ORDER DETAILS:
+
+- - Order 1
+  Country: FR->SC
+  Regarding: Ransomware
+  Type: Metadata
+  Accounts: 1
+  Signed: 2021-05-17
+  Received: 2021-10-18
+  Responded (not received): 2021-10-19
+  Responded (received): 2022-02-21
+
+- - Order 2
+  Country: FR->SC
+  Regarding: Ransomware
+  Type: Metadata
+  Accounts: 4
+  Signed: 2021-08-30
+  Received: 2022-03-02
+  Responded: 2022-03-05
+-----BEGIN PGP SIGNATURE-----
+
+iQI/BAEBCgApFiEEXLSc3OrHl/v4vcB0/XGtJ3GlzBsFAmJR4X8LHHZjQGNvY2su
+bGkACgkQ/XGtJ3GlzBsTqRAAqDSqKiZjhIkknsEExmrKxh81UE5mgpTsgWuvi/J0
+lRDxrHd2I8/GzTD+FPIXuTUpW2YsjitNLPeS3/tD4u4IL2Q94LncXmp5whubaX0V
+ax2HgvI1WvKqaqL6amqjNhpRI8KoOcbAfcY6aJmVl0UJJQlyuSl2AvbdPhk9wS2W
+jQPgH5ypvYMOLuHhOiRvSaf/2Bn5QWSkORYFCBrXi7W2xl+eQs9Us4aFRsol2dVP
+lhStgZWf7wI41/+iBKR/BHgtp+kJvQjD2Illeyej4lTQMPZIybyvH8nG2sjlwWXj
+5klPLbPhHIlrsfsspja7KlL/ZWnHGy5P53e2XXpZNCepG1tZoGEhHkSprjues6L4
+7dIrtSVQ6wK+tLUg6Bte2dhTS26vCdIcsnU3sxVwWRfZ+ecxaSaTlWBg65a1jFWW
+MT++45Z+6pZMCgFgrzDUCJi1gfAFb7SYX5vAPoweocEhTOcuqHd/40ht2LMCnok/
+okF7HSesw6QA85sZJU8IG+v8GuNJL73qnkJuXSxkRFnDy3sbMxguLY2YVPE2N5HN
+TJje5MGGaSG5FXvnNzLak9AWusU9tiuVw+UpHqvhvRLRWCNtnmn2vgdVr3vTuPRQ
+Nmc2pFOMX7I6YA+e5KMUY9K9oPXg3fDTfU2VcDFA6LIlSx5+zhz6TKakcBwrug8Z
+AvQ=
+=8eP8
+-----END PGP SIGNATURE-----

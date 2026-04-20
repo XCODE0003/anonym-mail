@@ -1,0 +1,63 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block content %}
+<h2>Users</h2>
+
+<div class="card">
+    <form method="GET" action="/admin/users" style="display: flex; gap: 0.5rem;">
+        <input type="text" name="q" value="{{ search|default('')|e }}" placeholder="Search..." style="flex: 1;">
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+</div>
+
+<div class="card">
+    <p style="margin-bottom: 0.75rem; color: var(--muted); font-size: 0.75rem;">{{ total }} users</p>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Email</th>
+                <th>Created</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.email }}</td>
+                <td>{{ user.created_at|date('Y-m-d') }}</td>
+                <td>
+                    {% if user.frozen %}<span class="badge badge-danger">Frozen</span>{% endif %}
+                    {% if user.smtp_blocked %}<span class="badge badge-warn">Blocked</span>{% endif %}
+                </td>
+                <td>
+                    <form method="POST" action="/admin/users/freeze" class="inline-form">
+                        <input type="hidden" name="csrf" value="{{ csrf_token }}">
+                        <input type="hidden" name="csrf_valid" value="{{ csrf_token }}">
+                        <input type="hidden" name="user_id" value="{{ user.id }}">
+                        {% if user.frozen %}
+                        <input type="hidden" name="action" value="unfreeze">
+                        <button type="submit" class="btn btn-sm btn-secondary">Unfreeze</button>
+                        {% else %}
+                        <input type="hidden" name="action" value="freeze">
+                        <button type="submit" class="btn btn-sm btn-danger">Freeze</button>
+                        {% endif %}
+                    </form>
+                    {% if user.smtp_blocked %}
+                    <form method="POST" action="/admin/users/unblock-smtp" class="inline-form">
+                        <input type="hidden" name="csrf" value="{{ csrf_token }}">
+                        <input type="hidden" name="csrf_valid" value="{{ csrf_token }}">
+                        <input type="hidden" name="user_id" value="{{ user.id }}">
+                        <button type="submit" class="btn btn-sm btn-secondary">Unblock</button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="4" style="text-align: center; color: var(--muted);">No users</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

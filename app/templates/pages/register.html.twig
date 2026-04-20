@@ -1,0 +1,76 @@
+{% extends 'layout.html.twig' %}
+
+{% block content %}
+<div class="page-form">
+    <h1>Create Account</h1>
+    
+    {% if errors is defined and errors %}
+    <div class="message message-error">
+        {% for error in errors %}{{ error }}{% if not loop.last %}<br>{% endif %}{% endfor %}
+    </div>
+    {% endif %}
+    
+    <form method="POST" action="/register">
+        <input type="hidden" name="csrf" value="{{ csrf_token }}">
+        <input type="hidden" name="csrf_valid" value="{{ csrf_token }}">
+        
+        <div class="form-group">
+            <label for="username">Username</label>
+            <div class="form-row">
+                <input type="text" id="username" name="username" 
+                       pattern="[a-z0-9._-]{3,32}" 
+                       placeholder="username"
+                       value="{{ old.username|default('') }}"
+                       required>
+                <select name="domain" required>
+                    {% for domain in domains %}
+                    <option value="{{ domain.id }}" {% if old.domain|default(0) == domain.id %}selected{% endif %}>
+                        @{{ domain.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <p class="form-hint">3-32 chars: a-z, 0-9, . _ -</p>
+        </div>
+        
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" minlength="10" required>
+            <p class="form-hint">Minimum 10 characters</p>
+        </div>
+        
+        <div class="hp-field" aria-hidden="true">
+            <input type="text" name="website" tabindex="-1" autocomplete="off">
+        </div>
+        
+        <div class="form-group">
+            <label for="password_confirm">Confirm Password</label>
+            <input type="password" id="password_confirm" name="password_confirm" minlength="10" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="captcha_solution">CAPTCHA</label>
+            <div class="captcha-row">
+                <img src="/captcha?k={{ captcha_key }}" alt="CAPTCHA" height="40">
+                <input type="text" id="captcha_solution" name="captcha_solution" autocomplete="off" required>
+            </div>
+            <input type="hidden" name="captcha_key" value="{{ captcha_key }}">
+        </div>
+        
+        <div class="form-group">
+            <label>
+                <input type="checkbox" name="tos_agree" required>
+                I agree to the <a href="/terms">Terms</a>
+            </label>
+        </div>
+        
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Create Account</button>
+        </div>
+    </form>
+    
+    <p style="margin-top: 1.5rem; text-align: center; color: var(--text-muted); font-size: 0.875rem;">
+        Have an account? <a href="/webmail">Sign in</a>
+    </p>
+</div>
+{% endblock %}

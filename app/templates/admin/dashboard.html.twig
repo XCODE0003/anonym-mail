@@ -1,0 +1,29 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block content %}
+<h2>Dashboard</h2>
+
+<div class="stats">
+    <div class="stat">
+        <div class="stat-value">{{ stats.total_users }}</div>
+        <div class="stat-label">Users</div>
+    </div>
+    <div class="stat">
+        <div class="stat-value">{{ stats.total_domains }}</div>
+        <div class="stat-label">Domains</div>
+    </div>
+    <div class="stat">
+        <div class="stat-value">{{ stats.blocked_users }}</div>
+        <div class="stat-label">Blocked</div>
+    </div>
+    <div class="stat">
+        <div class="stat-value">{{ stats.frozen_users }}</div>
+        <div class="stat-label">Frozen</div>
+    </div>
+</div>
+
+<div class="card" style="margin-top: 1rem;">
+    <a href="/admin/users" class="btn btn-secondary btn-sm">Manage Users</a>
+    <a href="/admin/domains" class="btn btn-secondary btn-sm">Manage Domains</a>
+</div>
+{% endblock %}

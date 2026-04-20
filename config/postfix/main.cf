@@ -1,0 +1,101 @@
+# Anonym Mail — Postfix main.cf
+# Privacy-focused mail transfer agent configuration
+
+# Basic settings
+smtpd_banner = $myhostname ESMTP
+biff = no
+append_dot_mydstrdomains = no
+readme_directory = no
+compatibility_level = 3.6
+
+# Hostname
+myhostname = mail.anonym-mail-service.test
+mydomain = anonym-mail-service.test
+myorigin = $mydomain
+
+# Network
+inet_interfaces = all
+inet_protocols = all
+mynetworks = 127.0.0.0/8 [::1]/128 172.16.0.0/12
+
+# Virtual mailbox settings
+virtual_mailbox_domains = pgsql:/etc/postfix/pgsql-virtual-mailbox-domains.cf
+virtual_mailbox_maps = pgsql:/etc/postfix/pgsql-virtual-mailbox-maps.cf
+virtual_alias_maps = pgsql:/etc/postfix/pgsql-virtual-alias-maps.cf
+virtual_transport = lmtp:inet:dovecot:24
+virtual_mailbox_base = /var/mail
+
+# User ID mapping
+virtual_uid_maps = static:5000
+virtual_gid_maps = static:5000
+virtual_minimum_uid = 100
+
+# TLS settings (submission)
+smtpd_tls_cert_file = /etc/postfix/certs/fullchain.pem
+smtpd_tls_key_file = /etc/postfix/certs/privkey.pem
+smtpd_tls_security_level = may
+smtpd_tls_auth_only = yes
+smtpd_tls_protocols = !SSLv2, !SSLv3, !TLSv1, !TLSv1.1
+smtpd_tls_mandatory_protocols = !SSLv2, !SSLv3, !TLSv1, !TLSv1.1
+smtpd_tls_ciphers = high
+smtpd_tls_mandatory_ciphers = high
+smtpd_tls_exclude_ciphers = aNULL, eNULL, EXPORT, DES, RC4, MD5, PSK, aECDH, EDH-DSS-DES-CBC3-SHA, EDH-RSA-DES-CBC3-SHA, KRB5-DES, CBC3-SHA
+
+# Outgoing TLS
+smtp_tls_security_level = may
+smtp_tls_protocols = !SSLv2, !SSLv3, !TLSv1, !TLSv1.1
+smtp_tls_ciphers = high
+
+# SASL authentication (via Dovecot)
+smtpd_sasl_type = dovecot
+smtpd_sasl_path = inet:dovecot:12345
+smtpd_sasl_auth_enable = yes
+smtpd_sasl_security_options = noanonymous
+smtpd_sasl_local_domain = $mydomain
+broken_sasl_auth_clients = yes
+
+# Recipient restrictions
+smtpd_recipient_restrictions =
+    permit_mynetworks,
+    permit_sasl_authenticated,
+    reject_unauth_destination,
+    reject_unknown_recipient_domain,
+    check_policy_service unix:private/policy
+
+# Sender restrictions
+smtpd_sender_restrictions =
+    permit_mynetworks,
+    permit_sasl_authenticated,
+    reject_unknown_sender_domain
+
+# HELO restrictions
+smtpd_helo_required = yes
+smtpd_helo_restrictions =
+    permit_mynetworks,
+    permit_sasl_authenticated,
+    reject_invalid_helo_hostname,
+    reject_non_fqdn_helo_hostname
+
+# Message size (25MB)
+message_size_limit = 26214400
+mailbox_size_limit = 0
+
+# Subaddressing
+recipient_delimiter = +
+
+# Content filter (Rspamd)
+smtpd_milters = inet:rspamd:11332
+non_smtpd_milters = inet:rspamd:11332
+milter_protocol = 6
+milter_default_action = accept
+
+# PRIVACY: Header checks - remove identifying information
+header_checks = pcre:/etc/postfix/header_checks
+
+# PRIVACY: No logging of client details
+# maillog_file = /dev/null
+# (Commented out - handled by syslog config)
+
+# Queue settings
+maximal_queue_lifetime = 5d
+bounce_queue_lifetime = 5d

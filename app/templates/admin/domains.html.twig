@@ -1,0 +1,37 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block content %}
+<h2>Domains</h2>
+
+<div class="card">
+    <form method="POST" action="/admin/domains/add" style="display: flex; gap: 0.5rem;">
+        <input type="hidden" name="csrf" value="{{ csrf_token }}">
+        <input type="hidden" name="csrf_valid" value="{{ csrf_token }}">
+        <input type="text" name="name" placeholder="example.com" required style="flex: 1;">
+        <button type="submit" class="btn btn-primary">Add</button>
+    </form>
+</div>
+
+<div class="card">
+    <table>
+        <thead>
+            <tr>
+                <th>Domain</th>
+                <th>Users</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for domain in domains %}
+            <tr>
+                <td>{{ domain.name }}</td>
+                <td>{{ domain.user_count }}</td>
+                <td>
+                    {% if domain.active %}<span class="badge badge-success">Active</span>{% else %}<span class="badge badge-danger">Inactive</span>{% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

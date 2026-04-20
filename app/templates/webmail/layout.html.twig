@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer">
+    <title>{% block title %}{{ page_title|default('') }}{% endblock %} — Mail</title>
+    <link rel="stylesheet" href="/assets/css/webmail.css">
+</head>
+<body class="{% block body_class %}{% endblock %}">
+    {% if user %}
+    <div class="webmail-layout">
+        <header class="webmail-header">
+            <a href="/webmail/inbox" class="logo">Mail</a>
+            <nav class="header-nav">
+                <span class="user-email">{{ user.email }}</span>
+                <a href="/webmail/compose">Compose</a>
+                <a href="/webmail/settings">Settings</a>
+                <a href="/webmail/logout">Logout</a>
+            </nav>
+        </header>
+        
+        <aside class="webmail-sidebar">
+            <a href="/webmail/compose" class="btn btn-primary compose-btn">Compose</a>
+            
+            <nav class="folder-list">
+                {% for folder in folders|default([]) %}
+                <a href="/webmail/folder/{{ folder|url_encode }}" 
+                   class="folder-item {% if current_folder|default('') == folder %}active{% endif %}">
+                    {{ folder }}
+                </a>
+                {% endfor %}
+            </nav>
+        </aside>
+        
+        <main class="webmail-main">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+    {% else %}
+    <main class="login-page">
+        {% block login_content %}{% endblock %}
+    </main>
+    {% endif %}
+</body>
+</html>
