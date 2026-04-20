@@ -32,39 +32,39 @@
                 <a href="/webmail/logout">Logout</a>
             </nav>
         </header>
-        
+
         <div class="webmail-content server-rendered">
             <aside class="webmail-sidebar">
                 <a href="/webmail/compose" class="btn btn-primary compose-btn">Compose</a>
-                
+
                 <nav class="folder-list">
                     {% for folder in folders|default([]) %}
-                    <a href="/webmail/folder/{{ folder|url_encode }}" 
+                    <a href="/webmail/folder/{{ folder|url_encode }}"
                        class="folder-item {% if current_folder|default('') == folder %}active{% endif %}">
                         {{ folder }}
                     </a>
                     {% endfor %}
                 </nav>
             </aside>
-            
+
             <main class="webmail-main">
                 {% block content %}{% endblock %}
             </main>
         </div>
     </div>
-    
+
     <script src="/assets/js/imap-client.js"></script>
     <script src="/assets/js/webmail-app.js"></script>
     <script>
     (function() {
         var wsProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
         var wsUrl = wsProtocol + '//' + location.host + '/ws/';
-        
+
         window.webmailConfig = {
             wsUrl: wsUrl,
             email: '{{ user.email|e('js') }}'
         };
-        
+
         document.body.classList.add('js-available');
     })();
     </script>

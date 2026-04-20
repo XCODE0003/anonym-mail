@@ -1,4 +1,4 @@
-# Anonym Mail
+# owl.li
 
 Self-hosted anonymous email service. Privacy-first, no JavaScript, no logs.
 
