@@ -11,13 +11,59 @@ class WebmailApp {
         this.messages = [];
         this.mailboxes = [];
         this.mailboxInfo = {};
+        this.credentials = null;
     }
 
     async init() {
-        if (!this.config.wsUrl || !this.config.email || !this.config.password) {
+        if (!this.config.wsUrl || !this.config.email) {
             console.log('[Webmail] Missing config, using server-side rendering');
             return false;
         }
+
+        this.addJsModeToggle();
+
+        const savedCreds = sessionStorage.getItem('webmail_creds');
+        if (savedCreds) {
+            try {
+                this.credentials = JSON.parse(savedCreds);
+                if (this.credentials.email === this.config.email) {
+                    return await this.connectWithCredentials();
+                }
+            } catch (e) {
+                sessionStorage.removeItem('webmail_creds');
+            }
+        }
+
+        return false;
+    }
+
+    addJsModeToggle() {
+        const header = document.querySelector('.header-nav, .webmail-header nav');
+        if (header) {
+            const toggle = document.createElement('button');
+            toggle.className = 'btn btn-secondary js-mode-toggle';
+            toggle.textContent = 'JS Mode';
+            toggle.title = 'Enable direct IMAP connection';
+            toggle.onclick = () => this.promptForCredentials();
+            header.insertBefore(toggle, header.firstChild);
+        }
+    }
+
+    promptForCredentials() {
+        const password = prompt('Enter your password to enable JS mode:');
+        if (!password) return;
+
+        this.credentials = {
+            email: this.config.email,
+            password: password
+        };
+
+        sessionStorage.setItem('webmail_creds', JSON.stringify(this.credentials));
+        this.connectWithCredentials();
+    }
+
+    async connectWithCredentials() {
+        if (!this.credentials) return false;
 
         try {
             document.body.classList.add('js-loading');
@@ -27,7 +73,7 @@ class WebmailApp {
             await this.imap.connect();
             
             this.showStatus('Authenticating...');
-            await this.imap.login(this.config.email, this.config.password);
+            await this.imap.login(this.credentials.email, this.credentials.password);
 
             this.showStatus('Loading mailboxes...');
             this.mailboxes = await this.imap.listMailboxes();
@@ -45,7 +91,9 @@ class WebmailApp {
         } catch (err) {
             console.error('[Webmail] Init failed:', err);
             document.body.classList.remove('js-loading');
-            this.showError('Connection failed. Using server mode.');
+            sessionStorage.removeItem('webmail_creds');
+            this.credentials = null;
+            this.showError('Connection failed. Check your password.');
             return false;
         }
     }
@@ -253,3 +301,16 @@ class WebmailApp {
 }
 
 window.WebmailApp = WebmailApp;
+
+document.addEventListener('DOMContentLoaded', function() {
+    if (window.webmailConfig && window.webmailConfig.email) {
+        var app = new WebmailApp(window.webmailConfig);
+        app.init().then(function(success) {
+            if (success) {
+                console.log('Webmail: JS mode active');
+            } else {
+                console.log('Webmail: Server mode active (click JS Mode to switch)');
+            }
+        });
+    }
+});

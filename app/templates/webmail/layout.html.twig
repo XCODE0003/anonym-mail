@@ -48,19 +48,12 @@
         var wsProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
         var wsUrl = wsProtocol + '//' + location.host + '/ws/';
         
-        var app = new WebmailApp({
+        window.webmailConfig = {
             wsUrl: wsUrl,
-            email: '{{ user.email|e('js') }}',
-            password: '{{ user.password|e('js') }}'
-        });
+            email: '{{ user.email|e('js') }}'
+        };
         
-        app.init().then(function(success) {
-            if (success) {
-                console.log('Webmail: JS mode active');
-            } else {
-                console.log('Webmail: Server mode active');
-            }
-        });
+        document.body.classList.add('js-available');
     })();
     </script>
     {% else %}
