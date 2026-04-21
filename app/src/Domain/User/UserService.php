@@ -57,8 +57,7 @@ final class UserService
         // Insert user (smtp_blocked=true by default)
         $stmt = $this->pdo->prepare(
             'INSERT INTO users (local_part, domain_id, password_hash, smtp_blocked, created_at)
-             VALUES (:local_part, :domain_id, :password_hash, true, CURRENT_DATE)
-             RETURNING id'
+             VALUES (:local_part, :domain_id, :password_hash, true, CURRENT_DATE)'
         );
 
         $stmt->execute([
@@ -67,8 +66,7 @@ final class UserService
             'password_hash' => $hash,
         ]);
 
-        $result = $stmt->fetch();
-        return (int) $result['id'];
+        return (int) $this->pdo->lastInsertId();
     }
 
     /**

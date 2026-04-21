@@ -12,9 +12,15 @@ use Psr\Http\Server\RequestHandlerInterface;
 /**
  * Security headers middleware.
  * Sets HSTS, CSP, and other security headers.
+ *
+ * @param bool $forWebmail When true, allow same-origin scripts and WebSocket (IMAP JS client).
  */
 final class SecurityHeadersMiddleware implements MiddlewareInterface
 {
+    public function __construct(
+        private readonly bool $forWebmail = false,
+    ) {}
+
     public function process(
         ServerRequestInterface $request,
         RequestHandlerInterface $handler
@@ -27,20 +33,31 @@ final class SecurityHeadersMiddleware implements MiddlewareInterface
             'max-age=63072000; includeSubDomains; preload'
         );
 
-        // Content Security Policy - NO JS allowed
-        $response = $response->withHeader(
-            'Content-Security-Policy',
-            "default-src 'self'; " .
-            "script-src 'none'; " .
-            "style-src 'self' 'unsafe-inline'; " .
-            "img-src 'self' data:; " .
-            "font-src 'self'; " .
-            "object-src 'none'; " .
-            "base-uri 'self'; " .
-            "form-action 'self'; " .
-            "frame-ancestors 'none'; " .
-            "upgrade-insecure-requests"
-        );
+        // Content Security Policy: main app has no JS; webmail needs scripts + WS to /ws/
+        $csp = $this->forWebmail
+            ? "default-src 'self'; " .
+                "script-src 'self' 'unsafe-inline'; " .
+                "style-src 'self' 'unsafe-inline'; " .
+                "img-src 'self' data: https:; " .
+                "font-src 'self'; " .
+                "connect-src 'self' wss: ws:; " .
+                "object-src 'none'; " .
+                "base-uri 'self'; " .
+                "form-action 'self'; " .
+                "frame-ancestors 'none'; " .
+                "upgrade-insecure-requests"
+            : "default-src 'self'; " .
+                "script-src 'none'; " .
+                "style-src 'self' 'unsafe-inline'; " .
+                "img-src 'self' data:; " .
+                "font-src 'self'; " .
+                "object-src 'none'; " .
+                "base-uri 'self'; " .
+                "form-action 'self'; " .
+                "frame-ancestors 'none'; " .
+                "upgrade-insecure-requests";
+
+        $response = $response->withHeader('Content-Security-Policy', $csp);
 
         // Prevent MIME sniffing
         $response = $response->withHeader('X-Content-Type-Options', 'nosniff');

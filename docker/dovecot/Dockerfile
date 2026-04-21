@@ -5,12 +5,13 @@ LABEL maintainer="Anonym Mail"
 # Install Dovecot and dependencies
 RUN apk add --no-cache \
     dovecot \
-    dovecot-pgsql \
+    dovecot-mysql \
     dovecot-pigeonhole-plugin \
     dovecot-lmtpd \
     ca-certificates \
     openssl \
-    bash
+    bash \
+    gettext
 
 # Create vmail user
 RUN addgroup -g 5000 vmail \
@@ -24,6 +25,7 @@ RUN mkdir -p /var/mail /var/run/dovecot \
 # Copy configuration
 COPY config/dovecot/dovecot.conf /etc/dovecot/dovecot.conf
 COPY config/dovecot/dovecot-sql.conf.ext /etc/dovecot/dovecot-sql.conf.ext
+COPY config/dovecot/dovecot-sql.conf.ext.template /etc/dovecot/dovecot-sql.conf.ext.template
 COPY config/dovecot/conf.d/ /etc/dovecot/conf.d/
 COPY docker/dovecot/entrypoint.sh /entrypoint.sh
 

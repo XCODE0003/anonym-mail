@@ -73,6 +73,7 @@ return [
         // Global variables
         $twig->addGlobal('brand_name', $settings['brandName']);
         $twig->addGlobal('primary_domain', $settings['primaryDomain']);
+        $twig->addGlobal('asset_version', $_ENV['ASSET_VERSION'] ?? '');
 
         return $twig;
     },

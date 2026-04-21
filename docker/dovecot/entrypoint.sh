@@ -1,13 +1,16 @@
 #!/bin/bash
 set -e
 
-# Substitute environment variables
-envsubst < /etc/dovecot/dovecot-sql.conf.ext.template > /etc/dovecot/dovecot-sql.conf.ext 2>/dev/null || true
+export DB_PORT="${DB_PORT:-3306}"
 
-# Fix permissions
+if [ -f /etc/dovecot/dovecot-sql.conf.ext.template ]; then
+    envsubst '$DB_HOST $DB_PORT $DB_NAME $DB_USER $DB_PASSWORD' \
+        < /etc/dovecot/dovecot-sql.conf.ext.template \
+        > /etc/dovecot/dovecot-sql.conf.ext
+fi
+
 chown -R vmail:vmail /var/mail
 chown -R dovecot:dovecot /var/run/dovecot
 chmod 600 /etc/dovecot/dovecot-sql.conf.ext
 
-# Start dovecot
 exec "$@"

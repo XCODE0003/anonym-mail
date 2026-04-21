@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="referrer" content="no-referrer">
     <title>{% block title %}{{ page_title|default('') }}{% endblock %} — {{ brand_name }}</title>
-    <link rel="stylesheet" href="/assets/css/webmail.css">
-    <link rel="stylesheet" href="/assets/css/webmail-js.css">
+    <link rel="stylesheet" href="/assets/css/webmail.css{% if asset_version %}?v={{ asset_version|e('url') }}{% endif %}">
+    <link rel="stylesheet" href="/assets/css/webmail-js.css{% if asset_version %}?v={{ asset_version|e('url') }}{% endif %}">
 </head>
 <body class="{% block body_class %}{% endblock %}">
     {% if user %}
@@ -63,8 +63,8 @@
 
     <template id="webmail-owl-logo-tmpl">{% include 'partials/owl-logo-icon.html.twig' %}</template>
 
-    <script src="/assets/js/imap-client.js"></script>
-    <script src="/assets/js/webmail-app.js"></script>
+    <script src="/assets/js/imap-client.js{% if asset_version %}?v={{ asset_version|e('url') }}{% endif %}"></script>
+    <script src="/assets/js/webmail-app.js{% if asset_version %}?v={{ asset_version|e('url') }}{% endif %}"></script>
     <script>
     (function() {
         var wsProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';

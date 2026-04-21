@@ -1,8 +1,8 @@
-# Dovecot SQL authentication (MySQL) — fallback if template is not rendered.
-# In Docker, prefer dovecot-sql.conf.ext.template + entrypoint envsubst.
+# Dovecot SQL authentication (MySQL). Generated from template via entrypoint envsubst.
+# Required env: DB_HOST, DB_NAME, DB_USER, DB_PASSWORD (optional: DB_PORT, default 3306)
 
 driver = mysql
-connect = host=mysql port=3306 dbname=mailservice user=mailservice password=devpassword123
+connect = host=$DB_HOST port=$DB_PORT dbname=$DB_NAME user=$DB_USER password=$DB_PASSWORD
 
 default_pass_scheme = ARGON2ID
 
