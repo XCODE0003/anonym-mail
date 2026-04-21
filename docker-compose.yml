@@ -43,6 +43,9 @@ services:
       - REDIS_PORT=6379
       - PRIMARY_DOMAIN=${PRIMARY_DOMAIN:-anonym-mail-service.test}
       - BRAND_NAME=${BRAND_NAME:-owl.li}
+      - SMTP_SUBMISSION_HOST=${SMTP_SUBMISSION_HOST:-postfix}
+      - SMTP_SUBMISSION_PORT=${SMTP_SUBMISSION_PORT:-587}
+      - SMTP_TLS_VERIFY_PEER=${SMTP_TLS_VERIFY_PEER:-false}
     volumes:
       - ./app:/var/www/app
       - ./webmail:/var/www/webmail

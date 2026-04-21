@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace App\Webmail;
 
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+use Symfony\Component\Mailer\Mailer;
+use Symfony\Component\Mailer\Transport\Smtp\EsmtpTransport;
+use Symfony\Component\Mime\Email;
+
 /**
  * IMAP client wrapper for webmail.
  * Uses native PHP IMAP extension.
@@ -309,25 +314,49 @@ final class ImapClient
         ];
     }
 
+    /**
+     * Send mail via SMTP submission (AUTH + STARTTLS), not PHP mail().
+     * PHP-FPM images usually have no sendmail; Postfix listens on 587 inside the stack.
+     */
     public function sendMessage(string $from, string $password, string $to, string $subject, string $body): bool
     {
-        // Use SMTP via mail() or PHPMailer
-        // For simplicity, using mail() which should be configured to use local Postfix
-        
-        $headers = [
-            'From' => $from,
-            'Reply-To' => $from,
-            'MIME-Version' => '1.0',
-            'Content-Type' => 'text/plain; charset=UTF-8',
-            'Content-Transfer-Encoding' => '8bit',
-        ];
-        
-        $headerString = '';
-        foreach ($headers as $name => $value) {
-            $headerString .= "$name: $value\r\n";
+        $host = $_ENV['SMTP_SUBMISSION_HOST'] ?? 'postfix';
+        $port = (int) ($_ENV['SMTP_SUBMISSION_PORT'] ?? 587);
+        $verifyPeer = filter_var($_ENV['SMTP_TLS_VERIFY_PEER'] ?? 'false', FILTER_VALIDATE_BOOLEAN);
+
+        try {
+            $transport = new EsmtpTransport($host, $port);
+            $transport->setUsername($from);
+            $transport->setPassword($password);
+
+            if (!$verifyPeer) {
+                $transport->getStream()->setStreamOptions([
+                    'ssl' => [
+                        'verify_peer' => false,
+                        'verify_peer_name' => false,
+                        'allow_self_signed' => true,
+                    ],
+                ]);
+            }
+
+            $mailer = new Mailer($transport);
+            $message = (new Email())
+                ->from($from)
+                ->replyTo($from)
+                ->to($to)
+                ->subject($subject)
+                ->text($body);
+
+            $mailer->send($message);
+
+            return true;
+        } catch (TransportExceptionInterface | \Throwable $e) {
+            if (filter_var($_ENV['APP_DEBUG'] ?? 'false', FILTER_VALIDATE_BOOLEAN)) {
+                error_log('[Webmail] SMTP send failed: ' . $e->getMessage());
+            }
+
+            return false;
         }
-        
-        return @mail($to, $subject, $body, $headerString);
     }
 
     private function getServerString(): string

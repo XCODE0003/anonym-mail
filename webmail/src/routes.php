@@ -298,7 +298,7 @@ $app->post('/compose', function (Request $request, Response $response) {
     return webmailRender($response, $twig, 'compose.html.twig', [
         'page_title' => 'Compose',
         'folders' => $folders,
-        'error' => 'The server could not send the message (mail transport failed). If SMTP is allowed for your account, the host may need PHP sendmail/Postfix configured.',
+        'error' => 'The server could not send the message (SMTP to Postfix failed). Check PHP can reach SMTP_SUBMISSION_HOST:SMTP_SUBMISSION_PORT (e.g. postfix:587), TLS settings, and Postfix logs.',
         'to' => $to,
         'subject' => $subject,
         'body' => $messageBody,
