@@ -4,41 +4,58 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="referrer" content="no-referrer">
-    <title>{% block title %}{{ page_title|default('') }}{% endblock %} — Mail</title>
+    <title>{% block title %}{{ page_title|default('') }}{% endblock %} — owl.li</title>
     <link rel="stylesheet" href="/assets/css/webmail.css">
     <link rel="stylesheet" href="/assets/css/webmail-js.css">
 </head>
 <body class="{% block body_class %}{% endblock %}">
     {% if user %}
     <div class="webmail-layout">
-        <header class="webmail-header">
-            <a href="/webmail/inbox" class="logo">
-                <svg class="logo-icon" fill="currentColor" viewBox="0 0 64 64"><path d="M13.36,21.78l-5.15,24.46c-.2,.94,.08,1.92,.73,2.62l9.99,10.66c.28,.3,.67,.47,1.08,.49h.05c.39,0,.77-.15,1.05-.42,.22-.21,.38-.47,.45-.77l2.17-9.09,6.9,3.61c.85,.44,1.86,.44,2.72,0l6.9-3.61,2.17,9.09c.2,.83,1.03,1.34,1.86,1.14,.29-.07,.56-.22,.77-.44l9.99-10.66c.66-.7,.93-1.68,.73-2.62l-5.15-24.46c-.16-.75-.42-1.47-.79-2.15l-6.46-11.92,1.71-1.31c.59-.45,.7-1.29,.25-1.88-.25-.33-.65-.52-1.06-.52H19.72c-.74,0-1.34,.6-1.34,1.34,0,.42,.2,.81,.53,1.07l1.71,1.31-6.46,11.92c-.37,.67-.63,1.4-.79,2.15ZM20.12,4.82h0Zm-4.9,17.87l10.62,7.49-15.21,14.34,4.6-21.82Zm4.6,34.83l-9.41-10.04h0l15.26-14.39-5.84,24.43Zm12.62-5.97c-.27,.14-.59,.14-.86,0l-7.35-3.84,3.93-16.43c.24-1-.15-2.02-.99-2.61l-1.52-1.07,6.36-4.93,6.36,4.93-1.52,1.07c-.84,.59-1.23,1.62-.99,2.61l3.93,16.43-7.35,3.84Zm-4.73-34.74c-.06-.05-.08-.13-.04-.2l1.4-2.43,1.52,1.17c.83,.63,1.99,.64,2.82,0l1.52-1.17,1.4,2.43c.04,.07,.02,.15-.04,.2l-4.29,3.32-4.29-3.32Zm16.48,40.71l-5.84-24.43,15.26,14.38h0l-9.41,10.05Zm9.2-13.01l-15.21-14.34,10.62-7.49,4.6,21.82Zm-5.25-23.81l-8.06,5.68-6.44-4.98,3.88-3.01c.85-.66,1.09-1.85,.55-2.78l-1.53-2.65,5.24-4.01c6.31,11.64,5.81,10.69,6.35,11.76Zm-5.79-14.71l-.85,.65h0l-9.3,7.12c-.12,.09-.28,.09-.39,0l-9.3-7.12h0l-.85-.65h20.69Zm-20.12,2.95l5.24,4.01-1.53,2.65c-.54,.93-.3,2.13,.55,2.78l3.88,3.01-6.44,4.98-8.06-5.68c.56-1.09,.06-.14,6.35-11.76Z"/></svg>
-                owl.li
+        <aside class="webmail-sidebar" aria-label="Mail navigation">
+            <div class="sidebar-brand">
+                <a href="/webmail/inbox" class="logo">
+                    <svg class="logo-icon" fill="#000000" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 593.943 593.942" xml:space="preserve"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <g> <path d="M457.429,325.734c-12.823-40.388-29.702-78.813-56.777-112.061c-7.381-9.065-14.3-18.519-21.224-27.944 c-13.975-19.013-22.102-40.771-25.455-63.693c-3.276-22.411-8.07-44.068-17.059-64.855c-1.135-2.62-0.983-6.467,0.032-9.205 c2.521-6.797,9.103-13.799,8.148-19.768c-1.367-8.548,2.011-12.913,6.479-18.278c0.665-0.796,0.91-1.942,1.061-3.167 c0.225-1.856-1.122-3.729-3.003-4.194c-1.276-0.318-2.497-0.498-3.443-0.074c-16.984,7.618-35.251,13.562-50.192,24.158 c-10.832,7.679-20.289,11.041-32.015,7.267c-19.56-6.292-38.593-5.333-57.867,1.048c-3.676,1.216-9.009,1.163-12.256-0.657 c-18.687-10.457-37.03-21.526-55.463-32.432C136.635,0.84,134.379,0,133.359,0s-1.248,1.542-0.567,3.468 c0.795,2.256,1.612,4.496,2.872,6.455c4.57,7.099,12.693,12.591,8.409,23.179c-0.722,1.787,1.195,5.797,3.076,7.291 c10.518,8.344,8.05,19.915,5.251,29.376c-5.133,17.34-6.577,34.692-3.66,52.02c2.289,13.599-0.987,25.219-5.431,37.585 c-3.672,10.212-5.957,21.306-6.577,32.143c-0.983,17.217-1.037,34.619,0.31,51.804c1.436,18.299,4.422,36.532,7.723,54.611 c3.354,18.393,8.258,36.504,11.799,54.867c1.844,9.564-0.229,20.641,3.889,28.809c4.729,9.385,4.871,18.08,4.341,27.516 c-1.146,20.535,1.232,40.662,14.737,56.773c12.301,14.676,21.71,31.967,39.013,42.518c10.926,6.658,9.988,15.826-1.636,21.984 c-7.752,4.104-16.622,6.176-25.092,8.832c-10.331,3.24-16.781,12.221-16.092,23.016c0.49,7.666,4.529,11.963,13.766,14.324 c1.979,0.506,2.583-0.518,1.383-2.17c-6.916-9.572-7.152-14.578-0.677-19.281c1.652-1.201,3.398-0.34,3.892,1.643 c1.706,6.83,3.982,7.055,12.742,4.064c3.109-1.061,6.226-2.105,8.984-3.027c1.938-0.648,4.382,0.232,5.455,1.967 c1.546,2.496,2.946,4.758,4.3,6.936c1.077,1.734,2.391,2.945,2.938,2.705s0.991-2.094,0.991-4.133v-9.988 c0-2.043,0.857-2.281,1.914-0.533c0.987,1.631,1.836,3.031,2.726,4.508c1.057,1.746,3.084,1.994,4.529,0.551 c3.199-3.199,6.03-6.047,8.898-8.854c2.599-2.547,5.23-5.064,7.862-7.58c1.477-1.412,2.521-0.887,1.824,1.031 c-0.453,1.24-1.008,2.387-1.506,3.559c-7.299,17.18-2.134,35.047,13.301,45.553c0.555,0.379,1.33,0.436,2.15,0.424 c1.232-0.02,1.159-1.301-0.057-2.941c-4.565-6.148-7.54-12.779-5.471-21.307c0.481-1.986,2.179-2.211,3.9-1.113 c4.713,3.016,7.928-0.637,10.787-4.65c3.566-5.002,6.863-10.221,9.964-15.525c3.884-6.643,9.18-11.656,17.1-9.869 c9.106,2.057,18.919,4.182,21.697,15.619c1.718,7.07,5.63,12.121,13.174,13.887c1.294,0.303,2.493,1.008,3.966,1.906 c1.742,1.064,1.881,2.889,0.281,4.158c-1.762,1.398-3.166,2.512-4.65,3.512c-1.335,0.898-2.738,1.686-4.378,2.6 c-1.787,0.99-1.571,1.934,0.469,2.008c14.558,0.518,17.883-3.072,19.087-17.891c0.477-5.904,0.248-11.865,0.143-17.182 c-0.041-2.041,1.008-2.42,2.309-0.846c7.822,9.451,16.646,19.812,24.925,30.598c4.893,6.373,10.865,10.057,18.626,10.357 c8.592,0.332,17.205,0.148,26.658,0.1c2.04-0.01,3.473-1.648,3.194-3.672c-2.382-17.488-4.361-32.828-6.683-48.117 c-1.229-8.082-0.836-15.344,2.917-23.121c5.312-11.016,9.511-22.717,12.868-34.496c9.548-33.469,11.245-67.777,10.249-102.338 c-0.057-2.041,1.171-2.844,2.754-1.787s2.628,0.273,2.33-1.75c-1.057-7.197-2.008-13.686-2.995-20.418 c-0.298-2.02,0.674-2.529,2.167-1.137c0.204,0.191,0.403,0.375,0.6,0.559c1.493,1.395,3.179,2.326,3.766,2.08 c0.588-0.244,0.8-2.076,0.53-4.104C460.375,341.189,459.792,333.182,457.429,325.734z"></path> </g> </g> </g></svg>
+                    <span class="logo-text">owl.li</span>
+                </a>
+            </div>
+
+            <a href="/webmail/compose" class="btn btn-primary compose-btn">
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+                <span class="compose-label">Compose</span>
             </a>
-            <nav class="header-nav">
-                <span class="user-email">{{ user.email }}</span>
-                <a href="/webmail/compose">Compose</a>
-                <a href="/webmail/settings">Settings</a>
-                <a href="/webmail/logout">Logout</a>
+
+            <nav class="folder-list" aria-label="Folders">
+                {% for folder in folders|default([]) %}
+                <a href="/webmail/folder/{{ folder|url_encode }}"
+                   class="folder-item {% if current_folder|default('') == folder %}active{% endif %}">
+                    {% include 'webmail/_folder_icon.html.twig' with { folder: folder } only %}
+                    <span class="folder-label">{{ folder }}</span>
+                </a>
+                {% endfor %}
             </nav>
-        </header>
 
-        <div class="webmail-content server-rendered">
-            <aside class="webmail-sidebar">
-                <a href="/webmail/compose" class="btn btn-primary compose-btn">Compose</a>
+            <div class="sidebar-footer">
+                <a href="/webmail/search" class="sidebar-link">
+                    <svg class="folder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                    <span>Search</span>
+                </a>
+                <a href="/webmail/settings" class="sidebar-link">
+                    <svg class="folder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+                    <span>Settings</span>
+                </a>
+                <div class="sidebar-user" title="{{ user.email }}">
+                    <svg class="folder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    <span class="sidebar-user-email">{{ user.email }}</span>
+                </div>
+                <a href="/webmail/logout" class="sidebar-link sidebar-link-logout">
+                    <svg class="folder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+                    <span>Sign out</span>
+                </a>
+            </div>
+        </aside>
 
-                <nav class="folder-list">
-                    {% for folder in folders|default([]) %}
-                    <a href="/webmail/folder/{{ folder|url_encode }}"
-                       class="folder-item {% if current_folder|default('') == folder %}active{% endif %}">
-                        {{ folder }}
-                    </a>
-                    {% endfor %}
-                </nav>
-            </aside>
-
-            <main class="webmail-main">
+        <div class="webmail-content">
+            <main class="webmail-main server-rendered">
                 {% block content %}{% endblock %}
             </main>
         </div>

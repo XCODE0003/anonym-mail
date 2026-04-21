@@ -13,10 +13,23 @@
     display: none;
 }
 
+/* JS mode: hide static sidebar, full-width client UI */
+.js-enabled .webmail-sidebar {
+    display: none;
+}
+
+.js-enabled .webmail-layout {
+    grid-template-columns: 1fr;
+}
+
+.js-enabled .webmail-content {
+    min-height: 100vh;
+}
+
 .webmail-js {
     display: grid;
-    grid-template-columns: 200px 1fr 350px;
-    height: calc(100vh - 52px);
+    grid-template-columns: 248px 1fr 350px;
+    min-height: 100vh;
     background: var(--bg);
 }
 
@@ -43,53 +56,175 @@
     border-right: 1px solid var(--border);
     display: flex;
     flex-direction: column;
-    padding: 1rem;
+    padding: 1rem 0.75rem;
 }
 
-.sidebar-header {
-    padding-bottom: 1rem;
+.webmail-js .sidebar-brand {
+    padding: 0 0.75rem 1rem;
     border-bottom: 1px solid var(--border);
     margin-bottom: 1rem;
 }
 
-.user-email {
-    font-size: 0.875rem;
-    color: var(--text-muted);
-    word-break: break-all;
-}
-
-.folder-list {
-    flex: 1;
-    overflow-y: auto;
-}
-
-.folder-item {
-    display: block;
-    padding: 0.5rem 0.75rem;
+.webmail-js .sidebar-brand .logo {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    font-weight: 700;
+    font-size: 1rem;
     color: var(--text);
     text-decoration: none;
-    border-radius: var(--radius);
-    margin-bottom: 2px;
 }
 
-.folder-item:hover {
+.webmail-js .logo-icon {
+    width: 28px;
+    height: 28px;
+}
+
+.webmail-js .compose-btn {
+    width: calc(100% - 1.5rem);
+    margin: 0 0.75rem 1.25rem;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.65rem 1rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-transform: none;
+    border-radius: 8px;
+}
+
+.webmail-js .btn-icon {
+    width: 18px;
+    height: 18px;
+}
+
+.webmail-js .folder-list {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 0 0.25rem;
+    min-height: 0;
+}
+
+.webmail-js .folder-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.55rem 0.75rem;
+    margin: 0 0.25rem;
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: 8px;
+}
+
+.webmail-js .folder-item:hover {
+    color: var(--text);
     background: var(--bg-input);
 }
 
-.folder-item.active {
-    background: var(--accent);
-    color: #000;
+.webmail-js .folder-item.active {
+    color: var(--text);
+    background: var(--bg-input);
+    font-weight: 600;
 }
 
-.sidebar-actions {
+.webmail-js .folder-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    opacity: 0.85;
+}
+
+.webmail-js .folder-label {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.webmail-js .sidebar-footer {
     margin-top: auto;
     padding-top: 1rem;
     border-top: 1px solid var(--border);
 }
 
-.sidebar-actions .btn {
+.webmail-js .sidebar-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.webmail-js .sidebar-actions .btn {
     width: 100%;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.25rem;
+    border-radius: 8px;
+    text-transform: none;
+    font-size: 0.8125rem;
+}
+
+.webmail-js .sidebar-user {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    margin: 0 0.25rem 0.5rem;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    border-radius: 8px;
+}
+
+.webmail-js .sidebar-user-email {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--text);
+    font-weight: 500;
+}
+
+.webmail-js .sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    margin: 0 0.25rem;
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: 8px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-family: inherit;
+    width: calc(100% - 0.5rem);
+    text-align: left;
+}
+
+.webmail-js .sidebar-link:hover {
+    color: var(--text);
+    background: var(--bg-input);
+}
+
+.webmail-js .sidebar-link-logout:hover {
+    color: var(--danger);
+}
+
+.webmail-js .mail-toolbar {
+    border-radius: 0;
+}
+
+.webmail-js .btn-refresh {
+    border-radius: 8px;
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 600;
+    font-size: 0.8125rem;
 }
 
 .mail-main {
