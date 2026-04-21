@@ -27,11 +27,30 @@ class WebmailApp {
             try {
                 this.credentials = JSON.parse(savedCreds);
                 if (this.credentials.email === this.config.email) {
-                    return await this.connectWithCredentials();
+                    const ok = await this.connectWithCredentials();
+                    if (ok) {
+                        return true;
+                    }
+                } else {
+                    sessionStorage.removeItem('webmail_creds');
                 }
             } catch (e) {
                 sessionStorage.removeItem('webmail_creds');
             }
+        }
+
+        if (this.config.password) {
+            this.credentials = {
+                email: this.config.email,
+                password: this.config.password,
+            };
+            sessionStorage.setItem('webmail_creds', JSON.stringify(this.credentials));
+            try {
+                delete this.config.password;
+            } catch (e) {
+                this.config.password = null;
+            }
+            return await this.connectWithCredentials();
         }
 
         return false;
@@ -86,6 +105,14 @@ class WebmailApp {
             
             document.body.classList.remove('js-loading');
             document.body.classList.add('js-enabled');
+
+            try {
+                delete window.webmailConfig.password;
+            } catch (e) {
+                if (window.webmailConfig) {
+                    window.webmailConfig.password = null;
+                }
+            }
             
             console.log('[Webmail] JS mode activated');
             return true;
@@ -350,9 +377,9 @@ document.addEventListener('DOMContentLoaded', function() {
         var app = new WebmailApp(window.webmailConfig);
         app.init().then(function(success) {
             if (success) {
-                console.log('Webmail: JS mode active');
+                console.log('Webmail: JS IMAP mode active');
             } else {
-                console.log('Webmail: Server mode active (click JS Mode to switch)');
+                console.log('Webmail: server-rendered mode (no JS IMAP)');
             }
         });
     }
