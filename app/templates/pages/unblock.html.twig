@@ -32,7 +32,7 @@
     </div>
     {% endif %}
     
-    {% if challenge %}
+    {% if challenge is defined and challenge %}
     {# Show challenge and solution input #}
     <h2>Step 2: Solve the Challenge</h2>
     
