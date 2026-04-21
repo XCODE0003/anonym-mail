@@ -14,6 +14,8 @@ final class UserService
 {
     private const MIN_PASSWORD_LENGTH = 10;
     private const USERNAME_PATTERN = '/^[a-z0-9._-]{3,32}$/';
+    /** Default mail quota when DB has no users.quota_bytes column (before migration 006). */
+    private const DEFAULT_QUOTA_BYTES = 1073741824;
 
     public function __construct(
         private readonly PDO $pdo,
@@ -84,11 +86,11 @@ final class UserService
         }
 
         $stmt = $this->pdo->prepare(
-            'SELECT u.id, u.local_part, d.name as domain, u.password_hash, 
-                    u.smtp_blocked, u.frozen, u.quota_bytes
+            'SELECT u.id, u.local_part, d.name as domain, u.password_hash,
+                    u.smtp_blocked, u.frozen
              FROM users u
              JOIN domains d ON u.domain_id = d.id
-             WHERE u.local_part = :local_part 
+             WHERE u.local_part = :local_part
                AND d.name = :domain
                AND u.frozen = false
                AND (u.delete_after IS NULL OR u.delete_after > CURRENT_DATE)'
@@ -114,7 +116,7 @@ final class UserService
             'id' => (int) $user['id'],
             'email' => $user['local_part'] . '@' . $user['domain'],
             'smtp_blocked' => (bool) $user['smtp_blocked'],
-            'quota_bytes' => (int) $user['quota_bytes'],
+            'quota_bytes' => self::DEFAULT_QUOTA_BYTES,
         ];
     }
 
