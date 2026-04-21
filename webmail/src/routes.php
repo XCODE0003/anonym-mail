@@ -6,14 +6,30 @@ declare(strict_types=1);
  * Webmail routes
  */
 
-use App\Webmail\ImapClient;
+use App\Domain\User\UserService;
 use App\Webmail\HtmlSanitizer;
+use App\Webmail\ImapClient;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\App;
 use Twig\Environment;
 
 /** @var App $app */
+
+function webmailPublicBaseUrl(): string
+{
+    $base = trim((string) ($_ENV['APP_URL'] ?? ''));
+    if ($base !== '') {
+        return rtrim($base, '/');
+    }
+
+    $host = trim((string) ($_ENV['PRIMARY_DOMAIN'] ?? ''), '/');
+    if ($host === '') {
+        return '';
+    }
+
+    return 'https://' . $host;
+}
 
 // Helper function
 function webmailRender(Response $response, Environment $twig, string $template, array $data = []): Response
@@ -196,6 +212,8 @@ $app->get('/compose', function (Request $request, Response $response) {
     $twig = $this->get(Environment::class);
     /** @var ImapClient $imap */
     $imap = $this->get(ImapClient::class);
+    /** @var UserService $userService */
+    $userService = $this->get(UserService::class);
     
     $user = $_SESSION['webmail_user'];
     $params = $request->getQueryParams();
@@ -206,6 +224,8 @@ $app->get('/compose', function (Request $request, Response $response) {
     
     $folders = $imap->getFolders();
     $imap->logout();
+
+    $smtpBlocked = $userService->isSmtpBlocked($user['email']);
     
     return webmailRender($response, $twig, 'compose.html.twig', [
         'page_title' => 'Compose',
@@ -213,6 +233,8 @@ $app->get('/compose', function (Request $request, Response $response) {
         'to' => $params['to'] ?? '',
         'subject' => $params['subject'] ?? '',
         'body' => $params['body'] ?? '',
+        'smtp_blocked' => $smtpBlocked,
+        'smtp_help_url' => webmailPublicBaseUrl() !== '' ? webmailPublicBaseUrl() . '/unblock' : '',
     ]);
 });
 
@@ -225,6 +247,8 @@ $app->post('/compose', function (Request $request, Response $response) {
     $twig = $this->get(Environment::class);
     /** @var ImapClient $imap */
     $imap = $this->get(ImapClient::class);
+    /** @var UserService $userService */
+    $userService = $this->get(UserService::class);
     
     $user = $_SESSION['webmail_user'];
     $body = $request->getParsedBody();
@@ -236,27 +260,50 @@ $app->post('/compose', function (Request $request, Response $response) {
     if (!$imap->login($user['email'], $user['password'])) {
         return $response->withHeader('Location', '/webmail/')->withStatus(302);
     }
-    
-    // Send email via SMTP
-    $success = $imap->sendMessage($user['email'], $user['password'], $to, $subject, $messageBody);
-    
+
     $folders = $imap->getFolders();
+    $smtpBlocked = $userService->isSmtpBlocked($user['email']);
+    $helpUrl = webmailPublicBaseUrl() !== '' ? webmailPublicBaseUrl() . '/unblock' : '';
+
+    if ($smtpBlocked) {
+        $imap->logout();
+        $msg = 'Outgoing mail is disabled for your account (SMTP blocked). New accounts often need to complete SMTP unblock on the main site.';
+        if ($helpUrl !== '') {
+            $msg .= ' Open: ' . $helpUrl;
+        } else {
+            $msg .= ' Ask the administrator to unblock SMTP or set ALLOW_SMTP_FOR_NEW_USERS=true for new registrations.';
+        }
+
+        return webmailRender($response, $twig, 'compose.html.twig', [
+            'page_title' => 'Compose',
+            'folders' => $folders,
+            'error' => $msg,
+            'to' => $to,
+            'subject' => $subject,
+            'body' => $messageBody,
+            'smtp_help_url' => $helpUrl,
+        ]);
+    }
+
+    $success = $imap->sendMessage($user['email'], $user['password'], $to, $subject, $messageBody);
     $imap->logout();
-    
+
     if ($success) {
         return webmailRender($response, $twig, 'compose-success.html.twig', [
             'page_title' => 'Message Sent',
             'folders' => $folders,
         ]);
     }
-    
+
     return webmailRender($response, $twig, 'compose.html.twig', [
         'page_title' => 'Compose',
         'folders' => $folders,
-        'error' => 'Failed to send message. Is your SMTP blocked?',
+        'error' => 'The server could not send the message (mail transport failed). If SMTP is allowed for your account, the host may need PHP sendmail/Postfix configured.',
         'to' => $to,
         'subject' => $subject,
         'body' => $messageBody,
+        'smtp_blocked' => false,
+        'smtp_help_url' => $helpUrl,
     ]);
 });
 
@@ -462,6 +509,8 @@ $app->get('/settings', function (Request $request, Response $response) {
     $imap = $this->get(ImapClient::class);
     
     $user = $_SESSION['webmail_user'];
+    /** @var UserService $userService */
+    $userService = $this->get(UserService::class);
     
     if (!$imap->login($user['email'], $user['password'])) {
         return $response->withHeader('Location', '/webmail/')->withStatus(302);
@@ -470,11 +519,16 @@ $app->get('/settings', function (Request $request, Response $response) {
     $folders = $imap->getFolders();
     $quota = $imap->getQuota();
     $imap->logout();
+
+    $smtpBlocked = $userService->isSmtpBlocked($user['email']);
+    $smtpHelpUrl = webmailPublicBaseUrl() !== '' ? webmailPublicBaseUrl() . '/unblock' : '';
     
     return webmailRender($response, $twig, 'settings.html.twig', [
         'page_title' => 'Settings',
         'folders' => $folders,
         'quota' => $quota,
+        'smtp_blocked' => $smtpBlocked,
+        'smtp_help_url' => $smtpHelpUrl,
     ]);
 });
 

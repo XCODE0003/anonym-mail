@@ -3,6 +3,17 @@
 {% block content %}
 <div class="compose-view">
     <h1>{{ page_title }}</h1>
+
+    {% if smtp_blocked is defined and smtp_blocked %}
+    <div class="message message-error">
+        Outgoing mail is blocked for this account.
+        {% if smtp_help_url %}
+        <a href="{{ smtp_help_url|e('html_attr') }}">Unblock SMTP on the main site</a>
+        {% else %}
+        Ask the administrator to unblock SMTP for your user, or set <code>ALLOW_SMTP_FOR_NEW_USERS=true</code> for new sign-ups.
+        {% endif %}
+    </div>
+    {% endif %}
     
     {% if error is defined %}
     <div class="message message-error">{{ error }}</div>

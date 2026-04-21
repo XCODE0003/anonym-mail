@@ -54,16 +54,19 @@ final class UserService
         // Hash password (Dovecot-compatible Argon2id)
         $hash = $this->hashPassword($password);
 
-        // Insert user (smtp_blocked=true by default)
+        $allowSmtp = filter_var($_ENV['ALLOW_SMTP_FOR_NEW_USERS'] ?? 'false', FILTER_VALIDATE_BOOLEAN);
+        $smtpBlocked = !$allowSmtp;
+
         $stmt = $this->pdo->prepare(
             'INSERT INTO users (local_part, domain_id, password_hash, smtp_blocked, created_at)
-             VALUES (:local_part, :domain_id, :password_hash, true, CURRENT_DATE)'
+             VALUES (:local_part, :domain_id, :password_hash, :smtp_blocked, CURRENT_DATE)'
         );
 
         $stmt->execute([
             'local_part' => strtolower($username),
             'domain_id' => $domainId,
             'password_hash' => $hash,
+            'smtp_blocked' => $smtpBlocked ? 1 : 0,
         ]);
 
         return (int) $this->pdo->lastInsertId();

@@ -9,6 +9,17 @@
         <dl>
             <dt>Email</dt>
             <dd>{{ user.email }}</dd>
+            <dt>Outgoing mail (SMTP)</dt>
+            <dd>
+                {% if smtp_blocked is defined and smtp_blocked %}
+                <strong>Blocked</strong> — you cannot send mail until this is lifted.
+                {% if smtp_help_url %}
+                <a href="{{ smtp_help_url|e('html_attr') }}">Unblock SMTP</a>
+                {% endif %}
+                {% else %}
+                Allowed
+                {% endif %}
+            </dd>
         </dl>
     </section>
     
