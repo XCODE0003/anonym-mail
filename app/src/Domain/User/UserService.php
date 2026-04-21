@@ -189,6 +189,35 @@ final class UserService
     }
 
     /**
+     * Resolve user id from full email (for PoW unblock after password step).
+     */
+    public function getUserIdForEmail(string $email): ?int
+    {
+        [$localPart, $domain] = $this->parseEmail($email);
+        if ($localPart === null) {
+            return null;
+        }
+
+        $stmt = $this->pdo->prepare(
+            'SELECT u.id FROM users u
+             INNER JOIN domains d ON u.domain_id = d.id
+             WHERE u.local_part = :local_part
+               AND d.name = :domain
+               AND u.frozen = false
+               AND (u.delete_after IS NULL OR u.delete_after > CURRENT_DATE)'
+        );
+
+        $stmt->execute([
+            'local_part' => strtolower($localPart),
+            'domain' => strtolower($domain),
+        ]);
+
+        $row = $stmt->fetch();
+
+        return $row !== false ? (int) $row['id'] : null;
+    }
+
+    /**
      * Check if user's SMTP is blocked.
      */
     public function isSmtpBlocked(string $email): bool

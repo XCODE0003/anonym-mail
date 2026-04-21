@@ -15,13 +15,13 @@
     
     <h2>SMTP Settings</h2>
     <ul>
-        <li><strong>Server:</strong> <code>mail.{{ primary_domain }}</code></li>
+        <li><strong>Server:</strong> <code>{{ primary_domain }}</code> (or <code>mail.{{ primary_domain }}</code> if you use a mail host)</li>
         <li><strong>Port:</strong> <code>465</code> (SSL/TLS) or <code>587</code> (STARTTLS)</li>
         <li><strong>Username:</strong> <code>{{ email }}</code></li>
     </ul>
     
     <div style="margin-top: 2rem;">
-        <a href="/webmail" class="btn btn-primary">Go to Webmail</a>
+        <a href="/webmail/" class="btn btn-primary">Go to Webmail</a>
     </div>
 </div>
 {% endblock %}

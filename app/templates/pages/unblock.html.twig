@@ -32,7 +32,7 @@
     </div>
     {% endif %}
     
-    {% if challenge is defined %}
+    {% if challenge %}
     {# Show challenge and solution input #}
     <h2>Step 2: Solve the Challenge</h2>
     
@@ -42,7 +42,7 @@
     
     <p><a href="/scripts/unblock-solver.sh" download class="btn btn-secondary">Download Solver Script</a></p>
     
-    <form method="GET" action="/unblock.php" style="margin-top: 2rem;">
+    <form method="GET" action="/unblock" style="margin-top: 2rem;">
         <input type="hidden" name="email" value="{{ email }}">
         
         <div class="form-group">
@@ -56,10 +56,11 @@
     
     {% else %}
     {# Initial form #}
-    <form method="POST" action="/unblock.php">
+    <form method="POST" action="/unblock">
         <input type="hidden" name="csrf" value="{{ csrf_token }}">
         <input type="hidden" name="csrf_valid" value="{{ csrf_token }}">
-        
+        <input type="text" name="password_confirm" value="" autocomplete="off" tabindex="-1" aria-hidden="true" style="position:absolute;left:-9999px;height:0;width:0;opacity:0" class="honeypot">
+
         <div class="form-group">
             <label for="email">Email Address</label>
             <input type="email" id="email" name="email" required>

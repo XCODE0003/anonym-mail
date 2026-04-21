@@ -6,6 +6,8 @@ use App\Captcha\CaptchaGenerator;
 use App\Domain\Domain\DomainRepository;
 use App\Domain\User\UserService;
 use App\Domain\User\UserValidationException;
+use App\Pow\ChallengeService;
+use App\Pow\RateLimitException;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\App;
@@ -173,6 +175,116 @@ $app->get('/changepass', $changepassGet);
 $app->get('/changepass.php', $changepassGet);
 $app->post('/changepass', $changepassPost);
 $app->post('/changepass.php', $changepassPost);
+
+// SMTP unblock (proof-of-work)
+$unblockGet = function (Request $request, Response $response) {
+    $twig = $this->get(Environment::class);
+    /** @var ChallengeService $challengeService */
+    $challengeService = $this->get(ChallengeService::class);
+    /** @var UserService $userService */
+    $userService = $this->get(UserService::class);
+
+    $params = $request->getQueryParams();
+    $email = strtolower(trim((string) ($params['email'] ?? '')));
+    $code = trim((string) ($params['unblock_code'] ?? ''));
+
+    if ($email !== '' && $code !== '') {
+        if ($challengeService->verifySolution($email, $code)) {
+            $userId = $userService->getUserIdForEmail($email);
+            if ($userId === null) {
+                return render($response, $twig, 'pages/unblock.html.twig', [
+                    'page_title' => 'Unblock SMTP',
+                    'errors' => ['Account not found.'],
+                ]);
+            }
+            $userService->unblockSmtp($userId);
+
+            return render($response, $twig, 'pages/unblock-success.html.twig', [
+                'page_title' => 'SMTP Unblocked',
+                'email' => $email,
+            ]);
+        }
+
+        $challenge = $challengeService->getChallenge($email);
+
+        $payload = [
+            'page_title' => 'Unblock SMTP',
+            'errors' => ['Invalid solution code. Check the solver output and try again.'],
+            'email' => $email,
+        ];
+        if ($challenge !== null) {
+            $payload['challenge'] = [
+                'seed' => $challenge->seed,
+                'salt' => $challenge->salt,
+                'difficulty' => $challenge->difficulty,
+            ];
+        }
+
+        return render($response, $twig, 'pages/unblock.html.twig', $payload);
+    }
+
+    return render($response, $twig, 'pages/unblock.html.twig', [
+        'page_title' => 'Unblock SMTP',
+    ]);
+};
+
+$unblockPost = function (Request $request, Response $response) {
+    $twig = $this->get(Environment::class);
+    /** @var UserService $userService */
+    $userService = $this->get(UserService::class);
+    /** @var ChallengeService $challengeService */
+    $challengeService = $this->get(ChallengeService::class);
+
+    $body = $request->getParsedBody() ?? [];
+    $email = strtolower(trim((string) ($body['email'] ?? '')));
+    $password = (string) ($body['password'] ?? '');
+
+    if ($email === '' || $password === '') {
+        return render($response, $twig, 'pages/unblock.html.twig', [
+            'page_title' => 'Unblock SMTP',
+            'errors' => ['Email and password are required.'],
+        ]);
+    }
+
+    $user = $userService->authenticate($email, $password);
+    if ($user === null) {
+        return render($response, $twig, 'pages/unblock.html.twig', [
+            'page_title' => 'Unblock SMTP',
+            'errors' => ['Invalid email or password.'],
+        ]);
+    }
+
+    if (!$userService->isSmtpBlocked($email)) {
+        return render($response, $twig, 'pages/unblock.html.twig', [
+            'page_title' => 'Unblock SMTP',
+            'errors' => ['SMTP is already enabled for this account.'],
+        ]);
+    }
+
+    try {
+        $challenge = $challengeService->generateChallenge($email);
+    } catch (RateLimitException $e) {
+        return render($response, $twig, 'pages/unblock.html.twig', [
+            'page_title' => 'Unblock SMTP',
+            'errors' => [$e->getMessage()],
+        ]);
+    }
+
+    return render($response, $twig, 'pages/unblock.html.twig', [
+        'page_title' => 'Unblock SMTP',
+        'email' => $email,
+        'challenge' => [
+            'seed' => $challenge->seed,
+            'salt' => $challenge->salt,
+            'difficulty' => $challenge->difficulty,
+        ],
+    ]);
+};
+
+$app->get('/unblock', $unblockGet);
+$app->get('/unblock.php', $unblockGet);
+$app->post('/unblock', $unblockPost);
+$app->post('/unblock.php', $unblockPost);
 
 // Static pages
 $termsHandler = function (Request $request, Response $response) {
