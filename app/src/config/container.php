@@ -75,10 +75,7 @@ return [
         $twig->addGlobal('primary_domain', $settings['primaryDomain']);
 
         $assetOverride = trim((string) ($_ENV['ASSET_VERSION'] ?? ''));
-        $webmailCss = __DIR__ . '/../../public/assets/css/webmail.css';
-        $assetVersion = $assetOverride !== ''
-            ? $assetOverride
-            : (is_readable($webmailCss) ? (string) filemtime($webmailCss) : '1');
+        $assetVersion = $assetOverride !== '' ? $assetOverride : (string) time();
         $twig->addGlobal('asset_version', $assetVersion);
 
         return $twig;
