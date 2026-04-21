@@ -141,10 +141,12 @@ class ImapClient {
         for (const line of data) {
             const match = line.match(/LIST\s+\(([^)]*)\)\s+"([^"]*)"\s+"?([^"]+)"?/i);
             if (match) {
+                const raw = match[3];
                 mailboxes.push({
                     flags: match[1].split(' ').filter(Boolean),
                     delimiter: match[2],
-                    name: match[3],
+                    name: raw,
+                    displayName: ImapClient.decodeUtf7Imap(raw),
                 });
             }
         }
@@ -345,19 +347,85 @@ class ImapClient {
         return headers;
     }
 
+    /**
+     * MIME encoded-word (RFC 2047) with proper charset (UTF-8, windows-1251, koi8-r, …).
+     */
     decodeHeader(str) {
         if (!str) return '';
-        return str.replace(/=\?([^?]+)\?([BQ])\?([^?]*)\?=/gi, (match, charset, encoding, text) => {
+        const csNorm = (cs) => {
+            if (!cs) return 'utf-8';
+            const x = cs.replace(/^x-/i, '').toLowerCase().trim();
+            if (x === 'utf8' || x === 'utf-8') return 'utf-8';
+            if (x.includes('1251') || x === 'cp1251') return 'windows-1251';
+            if (x.includes('koi8')) return 'koi8-r';
+            if (x.includes('1252') || x === 'cp1252') return 'windows-1252';
+            return x;
+        };
+        const decodeBytes = (bytes, charset) => {
             try {
-                if (encoding.toUpperCase() === 'B') {
-                    return atob(text);
+                return new TextDecoder(csNorm(charset), { fatal: false }).decode(bytes);
+            } catch (e) {
+                return new TextDecoder('utf-8', { fatal: false }).decode(bytes);
+            }
+        };
+        const decodeQ = (text, charset) => {
+            const bytes = [];
+            for (let i = 0; i < text.length; i++) {
+                if (text[i] === '=' && i + 2 < text.length && /[0-9A-Fa-f]/.test(text[i + 1])) {
+                    bytes.push(parseInt(text.slice(i + 1, i + 3), 16));
+                    i += 2;
+                } else if (text[i] === '_') {
+                    bytes.push(0x20);
                 } else {
-                    return text.replace(/_/g, ' ').replace(/=([0-9A-F]{2})/gi, (m, hex) => 
-                        String.fromCharCode(parseInt(hex, 16))
-                    );
+                    bytes.push(text.charCodeAt(i) & 0xff);
                 }
+            }
+            return decodeBytes(new Uint8Array(bytes), charset);
+        };
+        return str.replace(/=\?([^?]+)\?([BbQq])\?([^?]*)\?=/g, (match, charset, encoding, text) => {
+            try {
+                const enc = encoding.toUpperCase();
+                const cleaned = text.replace(/\s/g, '');
+                if (enc === 'B') {
+                    const bin = atob(cleaned.replace(/-/g, '+').replace(/_/g, '/'));
+                    const bytes = new Uint8Array(bin.length);
+                    for (let i = 0; i < bin.length; i++) {
+                        bytes[i] = bin.charCodeAt(i) & 0xff;
+                    }
+                    return decodeBytes(bytes, charset);
+                }
+                return decodeQ(text.replace(/\s/g, ''), charset);
             } catch (e) {
                 return text;
+            }
+        });
+    }
+
+    /**
+     * IMAP modified UTF-7 (RFC 3501) for mailbox names with non-ASCII.
+     */
+    static decodeUtf7Imap(str) {
+        if (!str || !str.includes('&')) {
+            return str;
+        }
+        return str.replace(/&([^&-]*)-/g, (_, chunk) => {
+            if (chunk === '') {
+                return '&';
+            }
+            try {
+                let b64 = chunk.replace(/,/g, '/');
+                const pad = (4 - (b64.length % 4)) % 4;
+                b64 += '='.repeat(pad);
+                const bin = atob(b64);
+                const len = bin.length & ~1;
+                let out = '';
+                for (let i = 0; i < len; i += 2) {
+                    const code = (bin.charCodeAt(i) << 8) | bin.charCodeAt(i + 1);
+                    out += String.fromCharCode(code);
+                }
+                return out;
+            } catch (e) {
+                return '&' + chunk + '-';
             }
         });
     }

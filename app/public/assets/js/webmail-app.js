@@ -12,6 +12,26 @@ class WebmailApp {
         this.mailboxes = [];
         this.mailboxInfo = {};
         this.credentials = null;
+        /** @type {boolean} */
+        this._docClickBound = false;
+        /** Сколько последних писем запрашивать с сервера (IMAP seq) */
+        this.folderPageSize = 250;
+    }
+
+    /** Только список писем в папке — здесь включаем JS/IMAP-клиент. Иначе ломаются настройки, просмотр письма, compose. */
+    isMailClientPage() {
+        return /^\/webmail\/folder\//.test(location.pathname);
+    }
+
+    syncFolderFromUrl() {
+        const m = location.pathname.match(/^\/webmail\/folder\/(.+)$/);
+        if (m) {
+            try {
+                this.currentFolder = decodeURIComponent(m[1]);
+            } catch (e) {
+                this.currentFolder = m[1];
+            }
+        }
     }
 
     async init() {
@@ -21,6 +41,13 @@ class WebmailApp {
         }
 
         this.addJsModeToggle();
+
+        if (!this.isMailClientPage()) {
+            console.log('[Webmail] Server-rendered page (settings/message/compose/…) — skip JS mail client');
+            return false;
+        }
+
+        this.syncFolderFromUrl();
 
         const savedCreds = sessionStorage.getItem('webmail_creds');
         if (savedCreds) {
@@ -98,6 +125,15 @@ class WebmailApp {
             this.showStatus('Loading mailboxes...');
             this.mailboxes = await this.imap.listMailboxes();
 
+            this.syncFolderFromUrl();
+
+            if (!this.isMailClientPage()) {
+                document.body.classList.remove('js-loading');
+                const f = encodeURIComponent(this.currentFolder || 'INBOX');
+                window.location.assign('/webmail/folder/' + f);
+                return true;
+            }
+
             await this.selectFolder(this.currentFolder);
 
             this.render();
@@ -133,7 +169,8 @@ class WebmailApp {
         this.mailboxInfo = await this.imap.selectMailbox(folder);
         
         if (this.mailboxInfo.exists > 0) {
-            const start = Math.max(1, this.mailboxInfo.exists - 49);
+            const n = Math.min(this.folderPageSize, this.mailboxInfo.exists);
+            const start = Math.max(1, this.mailboxInfo.exists - n + 1);
             this.messages = await this.imap.fetchMessages(start, this.mailboxInfo.exists);
         } else {
             this.messages = [];
@@ -204,7 +241,7 @@ class WebmailApp {
                 <main class="mail-main">
                     <div class="mail-toolbar">
                         <button type="button" class="btn btn-secondary btn-refresh" data-action="refresh">Refresh</button>
-                        <span class="mail-count">${this.mailboxInfo.exists || 0} messages</span>
+                        <span class="mail-count">${this.messages.length} / ${this.mailboxInfo.exists || 0} · newest first</span>
                     </div>
                     <div class="message-list" id="message-list">
                         ${this.renderMessageList()}
@@ -219,18 +256,22 @@ class WebmailApp {
     }
 
     renderFolders() {
-        const names = this.mailboxes.length
-            ? this.mailboxes.map((m) => m.name)
-            : ['INBOX', 'Sent', 'Drafts', 'Trash', 'Spam'];
+        const list = this.mailboxes.length
+            ? this.mailboxes
+            : ['INBOX', 'Sent', 'Drafts', 'Trash', 'Spam'].map((n) => ({ name: n, displayName: n }));
 
-        return names
-            .map((f) => `
-                <a href="#" class="folder-item ${f === this.currentFolder ? 'active' : ''}"
-                   data-folder="${this.escapeHtml(f)}">
-                    ${this.folderIconSvg(f)}
-                    <span class="folder-label">${this.escapeHtml(f)}</span>
-                </a>
-            `)
+        return list
+            .map((entry) => {
+                const raw = entry.name;
+                const label = entry.displayName || raw;
+                const active = raw === this.currentFolder ? 'active' : '';
+                return `
+                <a href="#" class="folder-item ${active}"
+                   data-folder="${encodeURIComponent(raw)}">
+                    ${this.folderIconSvg(label)}
+                    <span class="folder-label">${this.escapeHtml(label)}</span>
+                </a>`;
+            })
             .join('');
     }
 
@@ -257,52 +298,27 @@ class WebmailApp {
     }
 
     async showMessage(uid) {
-        this.showStatus('Loading message...');
-        
-        try {
-            const msg = await this.imap.fetchMessageByUid(uid);
-            await this.imap.markAsRead(uid);
-
-            const preview = document.getElementById('preview-pane');
-            if (!preview) return;
-
-            preview.innerHTML = `
-                <div class="preview-header">
-                    <h2 class="preview-subject">${this.escapeHtml(msg.headers.subject || '(No subject)')}</h2>
-                    <div class="preview-meta">
-                        <div><strong>From:</strong> ${this.escapeHtml(msg.headers.from || '')}</div>
-                        <div><strong>To:</strong> ${this.escapeHtml(msg.headers.to || '')}</div>
-                        <div><strong>Date:</strong> ${this.escapeHtml(msg.headers.date || '')}</div>
-                    </div>
-                    <div class="preview-actions">
-                        <button class="btn btn-secondary" data-action="reply" data-uid="${uid}">Reply</button>
-                        <button class="btn btn-secondary" data-action="delete" data-uid="${uid}">Delete</button>
-                    </div>
-                </div>
-                <div class="preview-body">
-                    <pre>${this.escapeHtml(msg.body)}</pre>
-                </div>
-            `;
-
-            document.querySelector(`.message-item[data-uid="${uid}"]`)?.classList.add('read');
-            this.clearStatus();
-        } catch (err) {
-            this.showError('Failed to load message');
-            console.error(err);
-        }
+        // Полное тело и кодировки надёжнее отдаёт PHP (imap extension); бинарные IMAP-литералы по WebSocket ломали текст
+        const folder = encodeURIComponent(this.currentFolder);
+        window.location.href = `/webmail/message/${folder}/${uid}`;
     }
 
     bindEvents() {
+        if (this._docClickBound) {
+            return;
+        }
+        this._docClickBound = true;
+
         document.addEventListener('click', async (e) => {
             const target = e.target.closest('[data-action], [data-folder], .message-item');
             if (!target) return;
 
             e.preventDefault();
 
-            if (target.dataset.folder) {
-                await this.selectFolder(target.dataset.folder);
+            if (target.hasAttribute('data-folder')) {
+                const raw = decodeURIComponent(target.getAttribute('data-folder') || '');
+                await this.selectFolder(raw);
                 this.render();
-                this.bindEvents();
             } else if (target.dataset.action === 'refresh') {
                 await this.selectFolder(this.currentFolder);
                 document.getElementById('message-list').innerHTML = this.renderMessageList();
