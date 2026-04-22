@@ -24,30 +24,58 @@
 {% endif %}
 
 <section class="trust-section">
-    <h2>Privacy First</h2>
+    <h2>How can you trust us?</h2>
     <div class="trust-content">
-        <p>No personal data required. No IP logging. Argon2id passwords. Warrant canary.</p>
+        <h3 class="trust-content-subhead">The honest limit</h3>
+        <p>No email host can hand you a mathematical proof that staff never read your messages. We don’t process mail for ad targeting, profiling, or “AI” training, but the architecture is the same almost everywhere: messages typically arrive in plaintext, get filtered for spam, and are stored. A provider that “encrypts your mailbox on disk” often still had plaintext at delivery time, unless <em>you</em> used end-to-end encryption or brought your own key model we never see.</p>
+        <p>We’re also not beyond legal pressure or a serious break-in. A warrant canary and a light operational footprint don’t make a nation-state adversary go away—but they can make the service easier to run honestly and to explain to users. Read ours on the <a href="/canary">canary page</a> and the <a href="/privacy">privacy policy</a> for what we try not to collect.</p>
+
+        <h3 class="trust-content-subhead">Metadata and content</h3>
+        <p>Even when the body is boring, the envelope tells a story: who talked to whom, when, and how often. If that matters, Tor or a good VPN for access, PGP-encrypted subject lines (where you use them), and moving mail off our disks all reduce what sits here over time. Metadata on the server is a separate problem from “is the body encrypted at rest?”—and both are worth thinking about.</p>
+
+        <h3 class="trust-content-subhead">Protecting the message body</h3>
+        <p>If the operator must not be able to read the text, use real end-to-end tools with the people you correspond with: <strong>OpenPGP</strong> (GnuPG, Mailvelope, your client’s PGP) or <strong>S/MIME</strong> with a mail client. Webmail in the browser can’t do better than the browser model allows, so a desktop client with PGP is often the stronger choice for sensitive content.</p>
+        <p>Keeping a lean mailbox helps too: download important mail, archive it where <em>you</em> control keys and backups, and delete it from the server when you can. For many people that habit matters as much as ciphers on the wire.</p>
+
+        <h3 class="trust-content-subhead">What we do on our side</h3>
+        <p>Sign-up stays minimal: we don’t require a phone, a second email, or an ID. The public site is built to work with <strong>zero JavaScript</strong> (no trackers, no client-side “framework” on the marketing pages). Passwords are hashed with <strong>Argon2id</strong>. We publish a <strong>warrant canary</strong>, aim to avoid logging what doesn’t need logging, and the service is meant to be usable over <strong>Tor</strong> as well as clearnet when the operator publishes an onion address.</p>
+
+        <p class="trust-lead"><strong>At a glance</strong></p>
         <ul class="trust-list">
-            <li>No phone required</li>
-            <li>No recovery email</li>
-            <li>No KYC</li>
-            <li>Zero JavaScript</li>
-            <li>Tor support</li>
+            <li>No account recovery via phone or “backup” mailbox you must disclose</li>
+            <li>No KYC: identity checks are not part of getting an address</li>
+            <li>Marketing pages and forms without required JavaScript</li>
+            <li>Argon2id password storage; canary and policies you can read</li>
+            <li>E2E (PGP/S/MIME) recommended when the server must not read the body</li>
         </ul>
     </div>
 </section>
 
 <section class="server-info">
     <h2>Connection</h2>
+    <p class="server-info-lead">Use your own mail client, or the web client after sign-in. Hostname for all of these is <code class="server-hostname">{{ primary_domain }}</code>.</p>
     <div class="info-grid">
         <div class="info-card">
-            <h3>IMAP</h3>
+            <h3>IMAP (TLS)</h3>
+            <p class="info-card-meta">read mail, folders, most clients</p>
             <code>{{ primary_domain }}:993</code>
         </div>
         <div class="info-card">
-            <h3>SMTP</h3>
+            <h3>SMTP submission</h3>
+            <p class="info-card-meta">STARTTLS (recommended in clients)</p>
+            <code>{{ primary_domain }}:587</code>
+        </div>
+        <div class="info-card">
+            <h3>SMTPS</h3>
+            <p class="info-card-meta">implicit TLS (legacy-friendly)</p>
             <code>{{ primary_domain }}:465</code>
         </div>
+        <div class="info-card">
+            <h3>POP3 (TLS)</h3>
+            <p class="info-card-meta">if you still prefer one-shot fetch</p>
+            <code>{{ primary_domain }}:995</code>
+        </div>
     </div>
+    <p class="server-info-note">Port <strong>25</strong> is for <abbr title="mail servers talking to each other">MX</abbr> / inbound from the internet, not for typical user submission—your client should use 587 or 465. If SMTP is rate-limited or blocked for new accounts, use the <a href="/unblock">unblock</a> flow if we offer it on this instance.</p>
 </section>
 {% endblock %}

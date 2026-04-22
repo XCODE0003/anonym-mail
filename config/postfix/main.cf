@@ -30,7 +30,7 @@ virtual_uid_maps = static:5000
 virtual_gid_maps = static:5000
 virtual_minimum_uid = 100
 
-# TLS settings (submission)
+# TLS settings (submission). If compose mounts certs as ./certs:/etc/ssl/mail, use that path instead.
 smtpd_tls_cert_file = /etc/postfix/certs/fullchain.pem
 smtpd_tls_key_file = /etc/postfix/certs/privkey.pem
 smtpd_tls_security_level = may

@@ -23,7 +23,7 @@ return [
     'settings' => fn () => [
         'debug' => (bool) ($_ENV['APP_DEBUG'] ?? false),
         'primaryDomain' => $_ENV['PRIMARY_DOMAIN'] ?? 'localhost',
-        'brandName' => $_ENV['BRAND_NAME'] ?? 'Anonym Mail',
+        'brandName' => $_ENV['BRAND_NAME'] ?? 'owlmail',
     ],
 
     // Redis client
@@ -60,9 +60,9 @@ return [
     // Twig
     Environment::class => function (ContainerInterface $c) {
         $loader = new FilesystemLoader(__DIR__ . '/../../templates');
-        
+
         $settings = $c->get('settings');
-        
+
         $twig = new Environment($loader, [
             'cache' => $settings['debug'] ? false : '/tmp/twig-cache',
             'debug' => $settings['debug'],
