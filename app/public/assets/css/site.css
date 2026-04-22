@@ -13,10 +13,10 @@
     --accent-hover: #ccc;
     --danger: #ff3333;
     --warning: #ffaa00;
-    
+
     --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
     --font-mono: 'SF Mono', Consolas, monospace;
-    
+
     --radius: 0;
     --transition: 100ms ease;
 }
@@ -473,7 +473,7 @@ a:hover {
 
 .info-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    grid-template-columns: repeat(2, minmax(180px, 1fr));
     gap: 1rem;
     margin-top: 1.5rem;
 }
@@ -590,15 +590,15 @@ th {
     .hero h1 {
         font-size: 2rem;
     }
-    
+
     .main-nav {
         display: none;
     }
-    
+
     .hero-actions {
         flex-direction: column;
     }
-    
+
     .info-grid {
         grid-template-columns: 1fr;
     }
