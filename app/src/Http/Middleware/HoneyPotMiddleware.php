@@ -12,12 +12,12 @@ use Slim\Psr7\Response;
 
 /**
  * Honey-pot middleware for bot detection.
- * If password_confirm field is filled, silently return fake success.
+ * If the hidden honey-pot field ("website") is filled, silently return fake success.
  * Bots see no indication they were caught.
  */
 final class HoneyPotMiddleware implements MiddlewareInterface
 {
-    private const HONEYPOT_FIELD = 'password_confirm';
+    private const HONEYPOT_FIELD = 'website';
     private const METHODS_TO_CHECK = ['POST', 'PUT', 'PATCH'];
 
     public function process(
