@@ -10,16 +10,17 @@
     To unblock your account, you must complete a proof-of-work challenge.</p>
     
     <h2>How It Works</h2>
-    
+
     <ol>
         <li>Enter your email and password below</li>
-        <li>Download and run the solver script on your computer</li>
-        <li>Enter the solution code to unblock SMTP</li>
+        <li>Solve the proof-of-work challenge in your browser (or run the shell script offline)</li>
+        <li>Submit the solution to unblock SMTP</li>
     </ol>
-    
+
     <div class="message message-warning">
-        <p><strong>Note:</strong> The proof-of-work challenge requires approximately 
-        1-3 minutes of CPU time. This is a one-time verification.</p>
+        <p><strong>Note:</strong> The proof-of-work challenge takes a few seconds
+        to a couple of minutes of CPU time depending on your browser. This is a
+        one-time verification.</p>
     </div>
     
     {% if errors is defined and errors %}
@@ -35,24 +36,37 @@
     {% if challenge is defined and challenge %}
     {# Show challenge and solution input #}
     <h2>Step 2: Solve the Challenge</h2>
-    
-    <p>Download the solver script and run it with your challenge:</p>
-    
-    <pre><code>./unblock-solver.sh "{{ challenge.seed }}" "{{ challenge.salt }}" {{ challenge.difficulty }}</code></pre>
-    
-    <p><a href="/scripts/unblock-solver.sh" download class="btn btn-secondary">Download Solver Script</a></p>
-    
+
+    <p>Click the button below to solve the challenge in your browser:</p>
+
+    <div id="pow-solver"
+         data-seed="{{ challenge.seed|e('html_attr') }}"
+         data-difficulty="{{ challenge.difficulty }}">
+        <button type="button" id="pow-solve-btn" class="btn btn-primary">Solve in browser</button>
+        <button type="button" id="pow-stop-btn" class="btn btn-secondary" style="display:none;">Stop</button>
+        <p id="pow-status" style="margin-top: 0.75rem; font-family: monospace; min-height: 1.4em;"></p>
+    </div>
+
+    <details style="margin-top: 1.25rem;">
+        <summary>Prefer to solve offline? Use the shell script</summary>
+        <pre style="margin-top: 0.5rem;"><code>./unblock-solver.sh "{{ challenge.seed }}" "{{ challenge.salt }}" {{ challenge.difficulty }}</code></pre>
+        <p><a href="/scripts/unblock-solver.sh" download class="btn btn-secondary">Download Solver Script</a></p>
+    </details>
+
     <form method="GET" action="/unblock" style="margin-top: 2rem;">
         <input type="hidden" name="email" value="{{ email }}">
-        
+
         <div class="form-group">
             <label for="unblock_code">Solution Code</label>
-            <input type="text" id="unblock_code" name="unblock_code" 
-                   placeholder="Paste the code from solver output" required>
+            <input type="text" id="unblock_code" name="unblock_code"
+                   placeholder="Auto-filled when the browser solver completes"
+                   autocomplete="off" required>
         </div>
-        
-        <button type="submit" class="btn btn-primary" style="width: 100%;">Verify & Unblock</button>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Verify &amp; Unblock</button>
     </form>
+
+    <script src="/assets/js/unblock-solver.js" defer></script>
     
     {% else %}
     {# Initial form #}

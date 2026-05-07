@@ -1,0 +1,166 @@
+services:
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: mail-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./config/nginx/prod.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./app/public:/var/www/app/public:ro
+      - ./app/public/assets:/var/www/app/public/assets:ro
+      - ./certs:/etc/nginx/certs:ro
+      - certbot-webroot:/var/www/certbot:ro
+    depends_on:
+      - php
+      - ws-proxy
+    networks:
+      - mail-network
+
+  php:
+    build:
+      context: ./docker/php
+      dockerfile: Dockerfile
+    container_name: mail-php
+    restart: unless-stopped
+    volumes:
+      - ./app:/var/www/app
+      - ./webmail:/var/www/webmail
+      - ./admin:/var/www/admin
+    environment:
+      - APP_ENV=${APP_ENV}
+      - APP_DEBUG=${APP_DEBUG}
+      - APP_KEY=${APP_KEY}
+      - APP_URL=${APP_URL}
+      - PRIMARY_DOMAIN=${PRIMARY_DOMAIN}
+      - BRAND_NAME=${BRAND_NAME}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - MAIL_HOSTNAME=${MAIL_HOSTNAME}
+      - SMTP_SUBMISSION_HOST=${SMTP_SUBMISSION_HOST:-postfix}
+      - SMTP_SUBMISSION_PORT=${SMTP_SUBMISSION_PORT:-587}
+      - SMTP_TLS_VERIFY_PEER=${SMTP_TLS_VERIFY_PEER:-false}
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - mail-network
+
+  mysql:
+    image: mysql:8.0
+    container_name: mail-mysql
+    restart: unless-stopped
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    environment:
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./app/migrations:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - mail-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: mail-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --maxmemory 128mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    networks:
+      - mail-network
+
+  postfix:
+    build:
+      context: ./docker/postfix
+      dockerfile: Dockerfile
+    container_name: mail-postfix
+    restart: unless-stopped
+    hostname: mail.owlmail.cc
+    ports:
+      - "25:25"
+      - "465:465"
+      - "587:587"
+    volumes:
+      - ./config/postfix:/etc/postfix/custom:ro
+      - mail_data:/var/mail
+      - ./certs:/etc/ssl/mail:ro
+      - postfix_spool:/var/spool/postfix
+    environment:
+      - MAIL_HOSTNAME=mail.owlmail.cc
+      - PRIMARY_DOMAIN=owlmail.cc
+      - DB_HOST=${DB_HOST}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - mail-network
+
+  dovecot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mail-dovecot
+    restart: unless-stopped
+    ports:
+      - "993:993"
+    volumes:
+      - ./config/dovecot:/etc/dovecot/custom:ro
+      - mail_data:/var/mail
+      - ./certs:/etc/ssl/mail:ro
+      - postfix_spool:/var/spool/postfix
+    environment:
+      - MAIL_HOSTNAME=mail.owlmail.cc
+      - DB_HOST=${DB_HOST}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - mail-network
+
+  ws-proxy:
+    build:
+      context: ./ws-proxy
+      dockerfile: Dockerfile
+    container_name: mail-ws-proxy
+    restart: unless-stopped
+    environment:
+      - WS_PORT=8080
+      - IMAP_HOST=dovecot
+      - IMAP_PORT=993
+    depends_on:
+      - dovecot
+    networks:
+      - mail-network
+
+networks:
+  mail-network:
+    driver: bridge
+
+volumes:
+  mysql_data:
+  redis_data:
+  mail_data:
+  certbot-webroot:
+  postfix_spool:

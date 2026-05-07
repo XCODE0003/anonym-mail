@@ -132,21 +132,12 @@ final class ChallengeService
         string $nonce,
         int $difficulty
     ): bool {
-        // Compute hash
-        $input = $seed . $nonce;
-        
-        // Use Argon2id with same parameters as password hashing
-        // but we're just checking for leading zeros
-        $hash = sodium_crypto_pwhash(
-            32, // Output length
-            $input,
-            hex2bin($salt),
-            SODIUM_CRYPTO_PWHASH_OPSLIMIT_INTERACTIVE,
-            SODIUM_CRYPTO_PWHASH_MEMLIMIT_INTERACTIVE,
-            SODIUM_CRYPTO_PWHASH_ALG_ARGON2ID13
-        );
+        // PoW: sha256(seed || nonce) must have >= $difficulty leading zero bits.
+        // Salt is part of the challenge identity (rotates per request) but not
+        // mixed into the hash — keeps client and server hashing identical and
+        // lets the browser solver use Web Crypto directly.
+        $hash = hash('sha256', $seed . $nonce, true);
 
-        // Check leading zero bits
         return $this->countLeadingZeroBits($hash) >= $difficulty;
     }
 

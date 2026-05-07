@@ -47,7 +47,7 @@ final class SecurityHeadersMiddleware implements MiddlewareInterface
                 "frame-ancestors 'none'; " .
                 "upgrade-insecure-requests"
             : "default-src 'self'; " .
-                "script-src 'none'; " .
+                "script-src 'self'; " .
                 "style-src 'self' 'unsafe-inline'; " .
                 "img-src 'self' data:; " .
                 "font-src 'self'; " .
