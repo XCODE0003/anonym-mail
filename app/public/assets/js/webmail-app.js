@@ -298,9 +298,82 @@ class WebmailApp {
     }
 
     async showMessage(uid) {
-        // Полное тело и кодировки надёжнее отдаёт PHP (imap extension); бинарные IMAP-литералы по WebSocket ломали текст
         const folder = encodeURIComponent(this.currentFolder);
-        window.location.href = `/webmail/message/${folder}/${uid}`;
+        const fallback = () => { window.location.href = `/webmail/message/${folder}/${uid}`; };
+
+        const pane = document.getElementById('preview-pane');
+        if (!pane) { fallback(); return; }
+
+        pane.innerHTML = '<div class="preview-empty">Loading message…</div>';
+
+        try {
+            const msg = await this.imap.fetchMessage(uid);
+            // Multipart/mixed (attachments) or unparseable bodies → server-side render is safer.
+            if (msg.hasAttachments || (!msg.text && !msg.html)) {
+                fallback();
+                return;
+            }
+
+            // Mark read (best-effort).
+            this.imap.markAsRead(uid).catch(() => {});
+            const item = document.querySelector(`.message-item[data-uid="${uid}"]`);
+            if (item) item.classList.add('read');
+
+            const subject = msg.headers.subject || '(No subject)';
+            const from = msg.headers.from || '';
+            const to = msg.headers.to || '';
+            const date = msg.headers.date || '';
+
+            const bodyHtml = msg.html
+                ? this._renderHtmlBody(msg.html)
+                : `<pre class="message-text">${this.escapeHtml(msg.text || '')}</pre>`;
+
+            pane.innerHTML = `
+                <article class="message-view">
+                    <header class="message-view-header">
+                        <h2 class="message-subject">${this.escapeHtml(subject)}</h2>
+                        <dl class="message-meta">
+                            <dt>From</dt><dd>${this.escapeHtml(from)}</dd>
+                            <dt>To</dt><dd>${this.escapeHtml(to)}</dd>
+                            <dt>Date</dt><dd>${this.escapeHtml(date)}</dd>
+                        </dl>
+                        <div class="message-actions">
+                            <a class="btn btn-secondary" href="/webmail/reply/${folder}/${uid}">Reply</a>
+                            <a class="btn btn-secondary" href="/webmail/forward/${folder}/${uid}">Forward</a>
+                            <a class="btn btn-secondary" href="/webmail/message/${folder}/${uid}">Open full view</a>
+                            <button type="button" class="btn btn-secondary" data-action="delete" data-uid="${uid}">Delete</button>
+                        </div>
+                    </header>
+                    <div class="message-body">${bodyHtml}</div>
+                </article>
+            `;
+        } catch (err) {
+            console.warn('[Webmail] fetchMessage failed, falling back to PHP:', err);
+            fallback();
+        }
+    }
+
+    /**
+     * Minimal client-side sanitizer: drop scripts/iframes/event handlers and
+     * neutralize external URLs by replacing them with the PHP image proxy
+     * (server-side serving prevents the email from de-anonymizing the user).
+     * For anything beyond very simple HTML, fall back to PHP rendering.
+     */
+    _renderHtmlBody(html) {
+        // Strip whole dangerous elements (script/style/iframe/object/embed/link/meta).
+        let cleaned = html.replace(/<\s*(script|style|iframe|object|embed|link|meta|base)\b[^>]*>[\s\S]*?<\s*\/\s*\1\s*>/gi, '');
+        cleaned = cleaned.replace(/<\s*(script|style|iframe|object|embed|link|meta|base)\b[^>]*>/gi, '');
+        // Strip event handlers (on*=...) and javascript: URLs.
+        cleaned = cleaned.replace(/\son[a-z]+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '');
+        cleaned = cleaned.replace(/(href|src|action|formaction)\s*=\s*("|')\s*javascript:[^"']*\2/gi, '$1=$2#$2');
+        // Reroute remote image URLs through the PHP proxy.
+        cleaned = cleaned.replace(/<img\b([^>]*?)\ssrc\s*=\s*"(https?:[^"]+)"([^>]*)>/gi,
+            (_, pre, url, post) => `<img${pre} data-original-src="${this.escapeAttr(url)}" alt="[external image]" class="external-image"${post}>`);
+        return `<div class="message-html">${cleaned}</div>`;
+    }
+
+    escapeAttr(s) {
+        return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
     }
 
     bindEvents() {

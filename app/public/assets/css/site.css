@@ -145,6 +145,19 @@ a:hover {
     font-size: 0.8rem;
 }
 
+.footer-tor {
+    text-align: center;
+    margin-top: 1rem;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    word-break: break-all;
+}
+
+.footer-tor a {
+    color: var(--text-muted);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
 /* ==========================================================================
    Hero
    ========================================================================== */

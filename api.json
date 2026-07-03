@@ -1,0 +1,2379 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+      "title": "BP Domains API",
+      "version": "1.0.0"
+    },
+    "paths": {
+      "/balance": {
+        "get": {
+          "tags": [
+            "BulletProof Domains API"
+          ],
+          "summary": "Get User Balance",
+          "description": "Get the current authenticated user's balance.",
+          "operationId": "get_user_balance_balance_get",
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/UserBalanceOut"
+                  }
+                }
+              }
+            }
+          },
+          "security": [
+            {
+              "HTTPBearer": []
+            }
+          ]
+        }
+      },
+      "/domains": {
+        "get": {
+          "tags": [
+            "BulletProof Domains API"
+          ],
+          "summary": "Get User Domains",
+          "description": "Get a list of all domains in the account with records:\n\n`domain`, `ns1`, `ns2`, `ns3`, `ns4`, `ns5`, `ns6`, `registrar_ban`, `google_ban`, `metamask_ban`, `category`, `bind_type`, `ip`, `ssl_mode`, and `security_mode`.",
+          "operationId": "get_user_domains_domains_get",
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/UserDomainsOut"
+                  }
+                }
+              }
+            }
+          },
+          "security": [
+            {
+              "HTTPBearer": []
+            }
+          ]
+        }
+      },
+      "/domains_availability": {
+        "post": {
+          "tags": [
+            "BulletProof Domains API"
+          ],
+          "summary": "Check Domain Availability",
+          "description": "Check the availability and price for a list of domains (max 10).\n\nAccepts a list of domains (with zones) in the request body and the registration type\nas a query parameter.",
+          "operationId": "check_domain_availability_domains_availability_post",
+          "security": [
+            {
+              "HTTPBearer": []
+            }
+          ],
+          "parameters": [
+            {
+              "name": "reg_type",
+              "in": "query",
+              "required": true,
+              "schema": {
+                "$ref": "#/components/schemas/RegTypePublic",
+                "description": "Registration type"
+              },
+              "description": "Registration type"
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DomainAvailabilityIn"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/DomainAvailabilityOut"
+                  }
+                }
+              }
+            },
+            "422": {
+              "description": "Validation Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/HTTPValidationError"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/registration": {
+        "post": {
+          "tags": [
+            "BulletProof Domains API"
+          ],
+          "summary": "Register Domains",
+          "description": "Register multiple domains (max 10).\n\nAccepts a list of domain objects, each containing the domain name and\na list of nameservers, in the request body. Requires the registration type\nas a query parameter.",
+          "operationId": "register_domains_registration_post",
+          "security": [
+            {
+              "HTTPBearer": []
+            }
+          ],
+          "parameters": [
+            {
+              "name": "reg_type",
+              "in": "query",
+              "required": true,
+              "schema": {
+                "$ref": "#/components/schemas/RegTypePublic",
+                "description": "Registration type"
+              },
+              "description": "Registration type"
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DomainsIn"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/DomainRegistrationOut"
+                  }
+                }
+              }
+            },
+            "422": {
+              "description": "Validation Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/HTTPValidationError"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/registration/ip": {
+        "post": {
+          "tags": [
+            "BulletProof Domains API"
+          ],
+          "summary": "Register Domains Ip",
+          "operationId": "register_domains_ip_registration_ip_post",
+          "security": [
+            {
+              "HTTPBearer": []
+            }
+          ],
+          "parameters": [
+            {
+              "name": "reg_type",
+              "in": "query",
+              "required": true,
+              "schema": {
+                "$ref": "#/components/schemas/RegTypePublic",
+                "description": "Registration type"
+              },
+              "description": "Registration type"
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DomainsInIP"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/DomainRegistrationIPOut"
+                  }
+                }
+              }
+            },
+            "422": {
+              "description": "Validation Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/HTTPValidationError"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/change_nameservers": {
+        "post": {
+          "tags": [
+            "BulletProof Domains API"
+          ],
+          "summary": "Change Domain Nameservers",
+          "description": "Change nameservers for multiple domains (max 10).\n\nAccepts a list of domain objects, each containing the domain name and\na list of new nameservers (2-6 per domain), in the request body.",
+          "operationId": "change_domain_nameservers_change_nameservers_post",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DomainsIn"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/DomainChangeNsOut"
+                  }
+                }
+              }
+            },
+            "422": {
+              "description": "Validation Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/HTTPValidationError"
+                  }
+                }
+              }
+            }
+          },
+          "security": [
+            {
+              "HTTPBearer": []
+            }
+          ]
+        }
+      },
+      "/change_ip": {
+        "post": {
+          "tags": [
+            "BulletProof Domains API"
+          ],
+          "summary": "Change Domain Ip",
+          "description": "Update A-record (IP) for multiple domains (max 10).\n\nAccepts a list of domain objects, each containing the `domain` and `ip_address`, in the request body. Updates the A-record in Cloudflare.\nIf a domain is still on nameservers, it creates a Cloudflare account and migrates the domain to IP-based binding.",
+          "operationId": "change_domain_ip_change_ip_post",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DomainsChangeIpIn"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/DomainChangeIpOut"
+                  }
+                }
+              }
+            },
+            "422": {
+              "description": "Validation Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/HTTPValidationError"
+                  }
+                }
+              }
+            }
+          },
+          "security": [
+            {
+              "HTTPBearer": []
+            }
+          ]
+        }
+      },
+      "/delete_domains": {
+        "post": {
+          "tags": [
+            "BulletProof Domains API"
+          ],
+          "summary": "Delete Domains",
+          "description": "Delete multiple domains (max 10).\n\nAccepts a list of domain names in the request body.\nIssues refunds based on predefined rules if applicable.",
+          "operationId": "delete_domains_delete_domains_post",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DomainsDeleteIn"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/DomainsDeleteOut"
+                  }
+                }
+              }
+            },
+            "422": {
+              "description": "Validation Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/HTTPValidationError"
+                  }
+                }
+              }
+            }
+          },
+          "security": [
+            {
+              "HTTPBearer": []
+            }
+          ]
+        }
+      },
+      "/change_ssl_mode": {
+        "post": {
+          "tags": [
+            "Cloudflare Management API"
+          ],
+          "summary": "Change Ssl Mode",
+          "description": "Change SSL mode for multiple domains (max 10).\n\nAccepts a list of domain objects, each containing the `domain` and `ssl_mode`, in the request body.\n\nAvailable values: `off`, `flexible`, `full`.",
+          "operationId": "change_ssl_mode_change_ssl_mode_post",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DomainsChangeSSLModeIn"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/DomainsChangeSSLModeOut"
+                  }
+                }
+              }
+            },
+            "422": {
+              "description": "Validation Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/HTTPValidationError"
+                  }
+                }
+              }
+            }
+          },
+          "security": [
+            {
+              "HTTPBearer": []
+            }
+          ]
+        }
+      },
+      "/change_security_mode": {
+        "post": {
+          "tags": [
+            "Cloudflare Management API"
+          ],
+          "summary": "Change Security Mode",
+          "description": "Change security mode for multiple domains (max 10).\n\nAccepts a list of domain objects, each containing the `domain` and `security_mode`, in the request body.\n\nAvailable values: `essentially_off`, `low`, `medium`, `high`, `under_attack`.",
+          "operationId": "change_security_mode_change_security_mode_post",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DomainsChangeSecurityModeIn"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/DomainsChangeSecurityModeOut"
+                  }
+                }
+              }
+            },
+            "422": {
+              "description": "Validation Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/HTTPValidationError"
+                  }
+                }
+              }
+            }
+          },
+          "security": [
+            {
+              "HTTPBearer": []
+            }
+          ]
+        }
+      },
+      "/change_proxy_status": {
+        "post": {
+          "tags": [
+            "Cloudflare Management API"
+          ],
+          "summary": "Change Proxy Status",
+          "description": "Change proxy status (A-record) for multiple domains.\n\nAccepts an array (up to 10 items) of domain objects with domain and proxied (boolean) in the request body.\nUpdates the corresponding Cloudflare DNS records to enable or disable proxying for each domain.",
+          "operationId": "change_proxy_status_change_proxy_status_post",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DomainsChangeProxyStatusIn"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/DomainsChangeProxyStatusOut"
+                  }
+                }
+              }
+            },
+            "422": {
+              "description": "Validation Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/HTTPValidationError"
+                  }
+                }
+              }
+            }
+          },
+          "security": [
+            {
+              "HTTPBearer": []
+            }
+          ]
+        }
+      },
+      "/clear_cache": {
+        "post": {
+          "tags": [
+            "Cloudflare Management API"
+          ],
+          "summary": "Clear Cache",
+          "description": "Clears Cloudflare cache for the domains you provide. Up to 10 domains.\nSend a JSON body with domains (array of domain names).\n\nYou receive a per-domain result with success or an error message.",
+          "operationId": "clear_cache_clear_cache_post",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DomainsClearCacheIn"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/DomainsClearCacheOut"
+                  }
+                }
+              }
+            },
+            "422": {
+              "description": "Validation Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/HTTPValidationError"
+                  }
+                }
+              }
+            }
+          },
+          "security": [
+            {
+              "HTTPBearer": []
+            }
+          ]
+        }
+      },
+      "/create_dns_records": {
+        "post": {
+          "tags": [
+            "Cloudflare Management API"
+          ],
+          "summary": "Create Dns Records",
+          "description": "Create DNS records in Cloudflare for a given domain.\n\nThis endpoint allows you to create up to **10 DNS records** at once.\nThe operation supports **partial success**: each DNS record is processed independently.\nInvalid records do not block valid ones.\n\nHigh-level behavior\n-------------------\n1. If the domain:\n   - does not exist,\n   - is deleted,\n   - is not IP-bound\n   → global failure:\n     - `\"success\": false`\n     - `\"dns_records\": []`\n     - `\"error\"` contains the reason.\n\n2. If the domain is valid:\n   - `\"success\": true`\n   - `\"dns_records\"` contains **per-record results**, each with its own `success` and optional `error`.\n\nRequest body (CreateDNSRecordsIn)\n---------------------------------\n```json\n{\n  \"domain_name\": \"example.com\",\n  \"dns_records\": [\n    {\n      \"record_type\": \"A | CNAME | MX | TXT\",\n      \"name\": \"string\",\n      \"content\": \"string\",\n      \"proxied\": true,\n      \"priority\": 10\n    }\n  ]\n}\n```\n\nCommon validation rules\n-----------------------\n- `domain_name` must be a valid domain owned by you.\n- `dns_records` length: **1–10**.\n- Duplicate records (same `record_type` + `name`) are automatically removed.\n- `name` must include `domain_name` and can be:\n  - a valid subdomain (`api.example.com`)\n  - a wildcard subdomain (`*.example.com`)\n  - or the domain itself (`example.com`)\n- `proxied` allowed only for **A** and **CNAME**.\n- `priority` allowed only for **MX**.\n\nRecord type: A\n--------------\n- Required:\n  - `name`: subdomain or wildcard, but **not equal to domain itself**\n    (forbidden: `\"name\": \"example.com\"`).\n  - `content`: valid IPv4.\n- Optional:\n  - `proxied`: defaults to `true`\n- Forbidden:\n  - `priority`\n\nExample:\n```json\n{\n  \"domain_name\": \"example.com\",\n  \"dns_records\": [\n    {\n      \"record_type\": \"A\",\n      \"name\": \"api.example.com\",\n      \"content\": \"8.8.8.8\",\n      \"proxied\": true\n    }\n  ]\n}\n```\n\nRecord type: CNAME\n-------------------\n- Required:\n  - `name`: subdomain / wildcard, but not equal to domain itself.\n  - `content`: valid domain / subdomain / IPv4.\n- Optional:\n  - `proxied`: allowed.\n- Forbidden:\n  - `priority`\n\nExample:\n```json\n{\n  \"domain_name\": \"example.com\",\n  \"dns_records\": [\n    {\n      \"record_type\": \"CNAME\",\n      \"name\": \"cdn.example.com\",\n      \"content\": \"target.example.net\",\n      \"proxied\": true\n    }\n  ]\n}\n```\n\nRecord type: MX\n----------------\n- Required:\n  - `name`: subdomain / wildcard / domain (`mail.example.com` or `example.com`).\n  - `content`: mail server domain.\n  - `priority`: required non-negative integer.\n- Forbidden:\n  - `proxied`\n\nExample:\n```json\n{\n  \"domain_name\": \"example.com\",\n  \"dns_records\": [\n    {\n      \"record_type\": \"MX\",\n      \"name\": \"example.com\",\n      \"content\": \"mx1.mailhost.com\",\n      \"priority\": 10\n    }\n  ]\n}\n```\n\nRecord type: TXT\n-----------------\n- Required:\n  - `name`: subdomain / wildcard / domain.\n  - `content`: non-empty string.\n- Forbidden:\n  - `proxied`\n  - `priority`\n\nExample:\n```json\n{\n  \"domain_name\": \"example.com\",\n  \"dns_records\": [\n    {\n      \"record_type\": \"TXT\",\n      \"name\": \"example.com\",\n      \"content\": \"v=spf1 include:example.net ~all\"\n    }\n  ]\n}\n```\n\nResponse (CreateDNSRecordsOut)\n-------------------------------\nGlobal success:\n```json\n{\n  \"success\": true,\n  \"error\": null,\n  \"dns_records\": [\n    {\n      \"success\": true,\n      \"record_id\": \"cf-id-123\",\n      \"record_type\": \"A\",\n      \"name\": \"api.example.com\",\n      \"content\": \"8.8.8.8\",\n      \"proxied\": true,\n      \"priority\": null,\n      \"error\": null\n    },\n    {\n      \"success\": false,\n      \"record_id\": \"\",\n      \"record_type\": \"MX\",\n      \"name\": \"example.com\",\n      \"content\": \"invalid\",\n      \"proxied\": null,\n      \"priority\": 10,\n      \"error\": \"Invalid DNS record\"\n    }\n  ]\n}\n```\n\nGlobal failure:\n```json\n{\n  \"success\": false,\n  \"error\": \"Domain not found or not owned by you\",\n  \"dns_records\": []\n}\n```",
+          "operationId": "create_dns_records_create_dns_records_post",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateDNSRecordsIn"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/CreateDNSRecordsOut"
+                  }
+                }
+              }
+            },
+            "422": {
+              "description": "Validation Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/HTTPValidationError"
+                  }
+                }
+              }
+            }
+          },
+          "security": [
+            {
+              "HTTPBearer": []
+            }
+          ]
+        }
+      },
+      "/show_dns_records": {
+        "get": {
+          "tags": [
+            "Cloudflare Management API"
+          ],
+          "summary": "Get Dns Records",
+          "operationId": "get_dns_records_show_dns_records_get",
+          "security": [
+            {
+              "HTTPBearer": []
+            }
+          ],
+          "parameters": [
+            {
+              "name": "domain_name",
+              "in": "query",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "title": "Domain Name"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/GetDNSRecordsOut"
+                  }
+                }
+              }
+            },
+            "422": {
+              "description": "Validation Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/HTTPValidationError"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/update_dns_records": {
+        "put": {
+          "tags": [
+            "Cloudflare Management API"
+          ],
+          "summary": "Update Dns Records",
+          "description": "Batch update DNS records (A, CNAME, MX, TXT) for a single domain.\n\nThis endpoint updates between 1 and 10 DNS records in Cloudflare in a single request.\nEach DNS record:\n- MUST already exist (matched by `dns_record_id`).\n- CANNOT change its `record_type` (A/CNAME/MX/TXT).\n- Is validated with the same rules as the DNS create endpoint.\n- Is processed independently (partial success is allowed).\n\nDuplicate `dns_record_id` values in the request are silently ignored\n(only the first occurrence is processed).\n\nGlobal errors (domain not found, not IP-bound, no Cloudflare credentials, etc.)\nare returned as:\n```json\n{\n  \"success\": false,\n  \"dns_records\": [],\n  \"error\": \"...\"\n}\n```\n\nIf the domain passes global checks, the method always returns:\n```json\n{\n  \"success\": true,\n  \"dns_records\": [... per-record results ...],\n  \"error\": null\n}\n```\nEven if some records fail, they are reported individually in `dns_records[*].error`.\n\n\n## Requirements\n\n- `domain_name` must belong to the authenticated user.\n- Domain must not be deleted.\n- Domain must be bound by IP (`bind_type == ip`).\n- Cloudflare credentials must exist for the domain.\n- Each `dns_record_id` must correspond to an existing DNS record\n  for this domain.\n- `record_type` for a record **cannot be changed**.\n\n\n## Supported record types and fields\n\n### A record\n\n- `record_type`: `\"A\"`\n- `name`:\n  - must be within the domain (e.g. `\"api.example.com\"`, `\"*.example.com\"`)\n- `content`:\n  - IPv4 address\n- `proxied`:\n  - optional, only for A/CNAME\n  - if `null` on input, default is `true` in validation\n- `priority`:\n  - must be `null` for A\n\n### CNAME record\n\n- `record_type`: `\"CNAME\"`\n- `name`:\n  - must be a valid hostname or wildcard within the domain\n    (e.g. `\"cdn.example.com\"`, `\"*.files.example.com\"`)\n- `content`:\n  - valid hostname, subdomain, or IPv4 address\n- `proxied`:\n  - optional, only for A/CNAME\n  - if `null` on input, default is `true` in validation\n- `priority`:\n  - must be `null` for CNAME\n\n### MX record\n\n- `record_type`: `\"MX\"`\n- `name`:\n  - root domain or subdomain under the domain\n    (e.g. `\"example.com\"`, `\"mail.example.com\"`, `\"*.example.com\"`)\n- `content`:\n  - mail server hostname (domain or subdomain)\n- `priority`:\n  - required, integer `\u003E= 0`\n- `proxied`:\n  - must be `null` (proxy is not supported for MX)\n\n### TXT record\n\n- `record_type`: `\"TXT\"`\n- `name`:\n  - root domain or subdomain under the domain\n    (e.g. `\"example.com\"`, `\"txt.example.com\"`, `\"*.example.com\"`,\n    `\"_acme-challenge.example.com\"`)\n- `content`:\n  - non-empty text\n- `proxied`:\n  - must be `null`\n- `priority`:\n  - must be `null`\n\n\n## Request body schema\n\n```json\n{\n  \"domain_name\": \"example.com\",\n  \"dns_records\": [\n    {\n      \"dns_record_id\": \"string\",\n      \"record_type\": \"A | CNAME | MX | TXT\",\n      \"name\": \"string\",\n      \"content\": \"string\",\n      \"proxied\": true,\n      \"priority\": 0\n    }\n  ]\n}\n```\n\n- `dns_records` length: 1..10\n- For A/CNAME, `proxied` is allowed (and defaulted to `true` when null).\n- For MX, `priority` is required, `proxied` must be null.\n- For TXT, both `proxied` and `priority` must be null.\n\n\n## Request example (mixed batch)\n\n```json\n{\n  \"domain_name\": \"example.com\",\n  \"dns_records\": [\n    {\n      \"dns_record_id\": \"ed333181687214515832f0bd7c8ebefb\",\n      \"record_type\": \"A\",\n      \"name\": \"api.example.com\",\n      \"content\": \"192.0.2.11\",\n      \"proxied\": true\n    },\n    {\n      \"dns_record_id\": \"7f5910b1f01f1cc6c5fcdabc111769b2\",\n      \"record_type\": \"MX\",\n      \"name\": \"mail.example.com\",\n      \"content\": \"mx1.mailhost.net\",\n      \"priority\": 5\n    },\n    {\n      \"dns_record_id\": \"d0c429f07ef4a588a3c380e2a2e6b474\",\n      \"record_type\": \"TXT\",\n      \"name\": \"example.com\",\n      \"content\": \"updated-verification-token\"\n    }\n  ]\n}\n```\n\n## Successful per-record response example\n\n```json\n{\n  \"success\": true,\n  \"dns_records\": [\n    {\n      \"success\": true,\n      \"record_id\": \"ed333181687214515832f0bd7c8ebefb\",\n      \"record_type\": \"A\",\n      \"name\": \"api.example.com\",\n      \"content\": \"192.0.2.11\",\n      \"proxied\": true,\n      \"priority\": null,\n      \"error\": null\n    },\n    {\n      \"success\": true,\n      \"record_id\": \"7f5910b1f01f1cc6c5fcdabc111769b2\",\n      \"record_type\": \"MX\",\n      \"name\": \"mail.example.com\",\n      \"content\": \"mx1.mailhost.net\",\n      \"proxied\": null,\n      \"priority\": 5,\n      \"error\": null\n    },\n    {\n      \"success\": true,\n      \"record_id\": \"d0c429f07ef4a588a3c380e2a2e6b474\",\n      \"record_type\": \"TXT\",\n      \"name\": \"example.com\",\n      \"content\": \"updated-verification-token\",\n      \"proxied\": null,\n      \"priority\": null,\n      \"error\": null\n    }\n  ],\n  \"error\": null\n}\n```\n\n## Per-record error example (partial failure)\n\n```json\n{\n  \"success\": true,\n  \"dns_records\": [\n    {\n      \"success\": false,\n      \"record_id\": \"d0c429f07ef4a588a3c380e2a2e6b474\",\n      \"record_type\": \"TXT\",\n      \"name\": \"_invalid.example.com\",\n      \"content\": \"\",\n      \"proxied\": null,\n      \"priority\": null,\n      \"error\": \"Invalid DNS record\"\n    }\n  ],\n  \"error\": null\n}\n```\n\nWhat this endpoint does:\n- Validates each record update according to its DNS type.\n- Sends updates to Cloudflare.\n- Returns a detailed per-record result for each requested update.",
+          "operationId": "update_dns_records_update_dns_records_put",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DNSRecordsUpdateIn"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/CreateDNSRecordsOut"
+                  }
+                }
+              }
+            },
+            "422": {
+              "description": "Validation Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/HTTPValidationError"
+                  }
+                }
+              }
+            }
+          },
+          "security": [
+            {
+              "HTTPBearer": []
+            }
+          ]
+        }
+      },
+      "/delete_dns_records": {
+        "delete": {
+          "tags": [
+            "Cloudflare Management API"
+          ],
+          "summary": "Delete Dns Records",
+          "operationId": "delete_dns_records_delete_dns_records_delete",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DNSRecordsDeleteIn"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/DNSRecordsDeleteOut"
+                  }
+                }
+              }
+            },
+            "422": {
+              "description": "Validation Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/HTTPValidationError"
+                  }
+                }
+              }
+            }
+          },
+          "security": [
+            {
+              "HTTPBearer": []
+            }
+          ]
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "BindType": {
+          "type": "string",
+          "enum": [
+            "NS",
+            "IP"
+          ],
+          "title": "BindType"
+        },
+        "CreateDNSRecordsIn": {
+          "properties": {
+            "domain_name": {
+              "type": "string",
+              "title": "Domain Name"
+            },
+            "dns_records": {
+              "items": {
+                "$ref": "#/components/schemas/DNSRecordModelIn"
+              },
+              "type": "array",
+              "title": "Dns Records"
+            }
+          },
+          "type": "object",
+          "required": [
+            "domain_name",
+            "dns_records"
+          ],
+          "title": "CreateDNSRecordsIn"
+        },
+        "CreateDNSRecordsOut": {
+          "properties": {
+            "success": {
+              "type": "boolean",
+              "title": "Success"
+            },
+            "dns_records": {
+              "items": {
+                "$ref": "#/components/schemas/DNSRecordModelOut"
+              },
+              "type": "array",
+              "title": "Dns Records"
+            },
+            "error": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Error"
+            }
+          },
+          "type": "object",
+          "required": [
+            "success",
+            "dns_records"
+          ],
+          "title": "CreateDNSRecordsOut"
+        },
+        "DNSRecordDeleteResult": {
+          "properties": {
+            "record_id": {
+              "type": "string",
+              "title": "Record Id"
+            },
+            "success": {
+              "type": "boolean",
+              "title": "Success"
+            },
+            "error": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Error"
+            }
+          },
+          "type": "object",
+          "required": [
+            "record_id",
+            "success"
+          ],
+          "title": "DNSRecordDeleteResult"
+        },
+        "DNSRecordModelIn": {
+          "properties": {
+            "record_type": {
+              "$ref": "#/components/schemas/DNSRecordType"
+            },
+            "name": {
+              "type": "string",
+              "title": "Name"
+            },
+            "content": {
+              "type": "string",
+              "title": "Content"
+            },
+            "proxied": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Proxied"
+            },
+            "priority": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Priority"
+            }
+          },
+          "type": "object",
+          "required": [
+            "record_type",
+            "name",
+            "content"
+          ],
+          "title": "DNSRecordModelIn"
+        },
+        "DNSRecordModelOut": {
+          "properties": {
+            "success": {
+              "type": "boolean",
+              "title": "Success"
+            },
+            "record_id": {
+              "type": "string",
+              "title": "Record Id"
+            },
+            "record_type": {
+              "$ref": "#/components/schemas/DNSRecordType"
+            },
+            "name": {
+              "type": "string",
+              "title": "Name"
+            },
+            "content": {
+              "type": "string",
+              "title": "Content"
+            },
+            "proxied": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Proxied"
+            },
+            "priority": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Priority"
+            },
+            "error": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Error"
+            }
+          },
+          "type": "object",
+          "required": [
+            "success",
+            "record_id",
+            "record_type",
+            "name",
+            "content"
+          ],
+          "title": "DNSRecordModelOut"
+        },
+        "DNSRecordType": {
+          "type": "string",
+          "enum": [
+            "TXT",
+            "A",
+            "MX",
+            "CNAME"
+          ],
+          "title": "DNSRecordType"
+        },
+        "DNSRecordUpdateIn": {
+          "properties": {
+            "dns_record_id": {
+              "type": "string",
+              "title": "Dns Record Id"
+            },
+            "record_type": {
+              "$ref": "#/components/schemas/DNSRecordType"
+            },
+            "name": {
+              "type": "string",
+              "title": "Name"
+            },
+            "content": {
+              "type": "string",
+              "title": "Content"
+            },
+            "proxied": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Proxied"
+            },
+            "priority": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Priority"
+            }
+          },
+          "type": "object",
+          "required": [
+            "dns_record_id",
+            "record_type",
+            "name",
+            "content"
+          ],
+          "title": "DNSRecordUpdateIn"
+        },
+        "DNSRecordsDeleteIn": {
+          "properties": {
+            "domain_name": {
+              "type": "string",
+              "title": "Domain Name"
+            },
+            "dns_record_ids": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array",
+              "title": "Dns Record Ids"
+            }
+          },
+          "type": "object",
+          "required": [
+            "domain_name",
+            "dns_record_ids"
+          ],
+          "title": "DNSRecordsDeleteIn"
+        },
+        "DNSRecordsDeleteOut": {
+          "properties": {
+            "success": {
+              "type": "boolean",
+              "title": "Success"
+            },
+            "dns_records": {
+              "items": {
+                "$ref": "#/components/schemas/DNSRecordDeleteResult"
+              },
+              "type": "array",
+              "title": "Dns Records"
+            },
+            "error": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Error"
+            }
+          },
+          "type": "object",
+          "required": [
+            "success",
+            "dns_records"
+          ],
+          "title": "DNSRecordsDeleteOut"
+        },
+        "DNSRecordsUpdateIn": {
+          "properties": {
+            "domain_name": {
+              "type": "string",
+              "title": "Domain Name"
+            },
+            "dns_records": {
+              "items": {
+                "$ref": "#/components/schemas/DNSRecordUpdateIn"
+              },
+              "type": "array",
+              "title": "Dns Records"
+            }
+          },
+          "type": "object",
+          "required": [
+            "domain_name",
+            "dns_records"
+          ],
+          "title": "DNSRecordsUpdateIn"
+        },
+        "DomainAvailability": {
+          "properties": {
+            "available": {
+              "type": "boolean",
+              "title": "Available"
+            },
+            "error": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Error"
+            },
+            "price": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Price"
+            }
+          },
+          "type": "object",
+          "required": [
+            "available"
+          ],
+          "title": "DomainAvailability"
+        },
+        "DomainAvailabilityIn": {
+          "properties": {
+            "domains": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array",
+              "title": "Domains"
+            }
+          },
+          "type": "object",
+          "required": [
+            "domains"
+          ],
+          "title": "DomainAvailabilityIn",
+          "description": "Модель запроса доступности доменов.\nВалидирует, что домены имеют формат SLD.TLD (без поддоменов)."
+        },
+        "DomainAvailabilityOut": {
+          "properties": {
+            "domains": {
+              "additionalProperties": {
+                "$ref": "#/components/schemas/DomainAvailability"
+              },
+              "type": "object",
+              "title": "Domains"
+            }
+          },
+          "type": "object",
+          "required": [
+            "domains"
+          ],
+          "title": "DomainAvailabilityOut",
+          "description": "Модель ответа на запрос доступности доменов."
+        },
+        "DomainChangeIpOut": {
+          "properties": {
+            "domains": {
+              "items": {
+                "$ref": "#/components/schemas/DomainChangeIpResult"
+              },
+              "type": "array",
+              "title": "Domains"
+            }
+          },
+          "type": "object",
+          "required": [
+            "domains"
+          ],
+          "title": "DomainChangeIpOut",
+          "description": "Ответ ручки /change_ip"
+        },
+        "DomainChangeIpResult": {
+          "properties": {
+            "domain": {
+              "type": "string",
+              "title": "Domain"
+            },
+            "success": {
+              "type": "boolean",
+              "title": "Success"
+            },
+            "email": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Email"
+            },
+            "password": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Password"
+            },
+            "error": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Error"
+            },
+            "zone_id": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Zone Id"
+            },
+            "dns_record_id": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Dns Record Id"
+            },
+            "api_key": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Api Key"
+            },
+            "tfa_code": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Tfa Code"
+            }
+          },
+          "type": "object",
+          "required": [
+            "domain",
+            "success"
+          ],
+          "title": "DomainChangeIpResult",
+          "description": "Результат по одному домену"
+        },
+        "DomainChangeNsOut": {
+          "properties": {
+            "domains": {
+              "items": {
+                "$ref": "#/components/schemas/DomainChangeNsResult"
+              },
+              "type": "array",
+              "title": "Domains"
+            }
+          },
+          "type": "object",
+          "required": [
+            "domains"
+          ],
+          "title": "DomainChangeNsOut",
+          "description": "Response model for the bulk nameserver change operation."
+        },
+        "DomainChangeNsResult": {
+          "properties": {
+            "domain": {
+              "type": "string",
+              "title": "Domain"
+            },
+            "success": {
+              "type": "boolean",
+              "title": "Success"
+            },
+            "error": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Error"
+            }
+          },
+          "type": "object",
+          "required": [
+            "domain",
+            "success"
+          ],
+          "title": "DomainChangeNsResult",
+          "description": "Result for changing nameservers for a single domain."
+        },
+        "DomainChangeProxyStatusModel": {
+          "properties": {
+            "domain": {
+              "type": "string",
+              "title": "Domain"
+            },
+            "proxied": {
+              "type": "boolean",
+              "title": "Proxied"
+            }
+          },
+          "type": "object",
+          "required": [
+            "domain",
+            "proxied"
+          ],
+          "title": "DomainChangeProxyStatusModel",
+          "description": "Model for domain proxy status change request.\nValidates domain format."
+        },
+        "DomainChangeProxyStatusOut": {
+          "properties": {
+            "domain": {
+              "type": "string",
+              "title": "Domain"
+            },
+            "success": {
+              "type": "boolean",
+              "title": "Success"
+            },
+            "error": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Error"
+            },
+            "proxied": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Proxied"
+            }
+          },
+          "type": "object",
+          "required": [
+            "domain",
+            "success"
+          ],
+          "title": "DomainChangeProxyStatusOut",
+          "description": "Response model for changing proxy status for a single domain."
+        },
+        "DomainChangeSSLModeResult": {
+          "properties": {
+            "domain": {
+              "type": "string",
+              "title": "Domain"
+            },
+            "success": {
+              "type": "boolean",
+              "title": "Success"
+            },
+            "error": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Error"
+            },
+            "ssl_mode": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/SSLMode"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "type": "object",
+          "required": [
+            "domain",
+            "success"
+          ],
+          "title": "DomainChangeSSLModeResult",
+          "description": "Result for changing SSL settings for a single domain."
+        },
+        "DomainChangeSecurityModeResult": {
+          "properties": {
+            "domain": {
+              "type": "string",
+              "title": "Domain"
+            },
+            "success": {
+              "type": "boolean",
+              "title": "Success"
+            },
+            "error": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Error"
+            },
+            "security_mode": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/SecurityMode"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "type": "object",
+          "required": [
+            "domain",
+            "success"
+          ],
+          "title": "DomainChangeSecurityModeResult",
+          "description": "Result for changing Security settings for a single domain."
+        },
+        "DomainDeleteResult": {
+          "properties": {
+            "domain": {
+              "type": "string",
+              "title": "Domain"
+            },
+            "deleted": {
+              "type": "boolean",
+              "title": "Deleted"
+            },
+            "refund_amount": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Refund Amount"
+            },
+            "error": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Error"
+            }
+          },
+          "type": "object",
+          "required": [
+            "domain",
+            "deleted"
+          ],
+          "title": "DomainDeleteResult",
+          "description": "Result for deleting a single domain."
+        },
+        "DomainInClearCacheOut": {
+          "properties": {
+            "domain": {
+              "type": "string",
+              "title": "Domain"
+            },
+            "success": {
+              "type": "boolean",
+              "title": "Success"
+            },
+            "error": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Error"
+            }
+          },
+          "type": "object",
+          "required": [
+            "domain",
+            "success"
+          ],
+          "title": "DomainInClearCacheOut",
+          "description": "Result for clearing cache for a single domain."
+        },
+        "DomainInUserDomains": {
+          "properties": {
+            "domain": {
+              "type": "string",
+              "title": "Domain"
+            },
+            "ns1": {
+              "type": "string",
+              "title": "Ns1"
+            },
+            "ns2": {
+              "type": "string",
+              "title": "Ns2"
+            },
+            "ns3": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Ns3"
+            },
+            "ns4": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Ns4"
+            },
+            "ns5": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Ns5"
+            },
+            "ns6": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Ns6"
+            },
+            "registrar_ban": {
+              "type": "boolean",
+              "title": "Registrar Ban"
+            },
+            "google_ban": {
+              "type": "boolean",
+              "title": "Google Ban"
+            },
+            "metamask_ban": {
+              "type": "boolean",
+              "title": "Metamask Ban"
+            },
+            "category": {
+              "$ref": "#/components/schemas/RegType"
+            },
+            "bind_type": {
+              "$ref": "#/components/schemas/BindType"
+            },
+            "ip": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Ip"
+            },
+            "ssl_mode": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/SSLMode"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "security_mode": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/SecurityMode"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "cloudflare_email": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cloudflare Email"
+            },
+            "cloudflare_password": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cloudflare Password"
+            },
+            "cloudflare_tfa_code": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cloudflare Tfa Code"
+            },
+            "cloudflare_api_key": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cloudflare Api Key"
+            },
+            "cloudflare_account_id": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cloudflare Account Id"
+            },
+            "warning": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Warning"
+            }
+          },
+          "type": "object",
+          "required": [
+            "domain",
+            "ns1",
+            "ns2",
+            "ns3",
+            "ns4",
+            "ns5",
+            "ns6",
+            "registrar_ban",
+            "google_ban",
+            "metamask_ban",
+            "category",
+            "bind_type"
+          ],
+          "title": "DomainInUserDomains"
+        },
+        "DomainIpModel": {
+          "properties": {
+            "domain": {
+              "type": "string",
+              "title": "Domain"
+            },
+            "ip_address": {
+              "type": "string",
+              "title": "Ip Address"
+            }
+          },
+          "type": "object",
+          "required": [
+            "domain",
+            "ip_address"
+          ],
+          "title": "DomainIpModel",
+          "description": "Один домен + новый IPv4"
+        },
+        "DomainModel": {
+          "properties": {
+            "domain": {
+              "type": "string",
+              "title": "Domain"
+            },
+            "nameservers": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array",
+              "title": "Nameservers"
+            }
+          },
+          "type": "object",
+          "required": [
+            "domain",
+            "nameservers"
+          ],
+          "title": "DomainModel"
+        },
+        "DomainModelIP": {
+          "properties": {
+            "domain": {
+              "type": "string",
+              "title": "Domain"
+            },
+            "ip_address": {
+              "type": "string",
+              "title": "Ip Address"
+            }
+          },
+          "type": "object",
+          "required": [
+            "domain",
+            "ip_address"
+          ],
+          "title": "DomainModelIP"
+        },
+        "DomainRegistrationIPOut": {
+          "properties": {
+            "domains": {
+              "items": {
+                "$ref": "#/components/schemas/DomainRegistrationIPResult"
+              },
+              "type": "array",
+              "title": "Domains"
+            }
+          },
+          "type": "object",
+          "required": [
+            "domains"
+          ],
+          "title": "DomainRegistrationIPOut"
+        },
+        "DomainRegistrationIPResult": {
+          "properties": {
+            "domain": {
+              "type": "string",
+              "title": "Domain"
+            },
+            "registered": {
+              "type": "boolean",
+              "title": "Registered"
+            },
+            "price": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Price"
+            },
+            "email": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Email"
+            },
+            "password": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Password"
+            },
+            "error": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Error"
+            },
+            "zone_id": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Zone Id"
+            },
+            "dns_record_id": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Dns Record Id"
+            },
+            "api_key": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Api Key"
+            },
+            "tfa_code": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Tfa Code"
+            }
+          },
+          "type": "object",
+          "required": [
+            "domain",
+            "registered"
+          ],
+          "title": "DomainRegistrationIPResult"
+        },
+        "DomainRegistrationOut": {
+          "properties": {
+            "domains": {
+              "items": {
+                "$ref": "#/components/schemas/DomainRegistrationResult"
+              },
+              "type": "array",
+              "title": "Domains"
+            }
+          },
+          "type": "object",
+          "required": [
+            "domains"
+          ],
+          "title": "DomainRegistrationOut",
+          "description": "Response model for domain registration."
+        },
+        "DomainRegistrationResult": {
+          "properties": {
+            "domain": {
+              "type": "string",
+              "title": "Domain"
+            },
+            "registered": {
+              "type": "boolean",
+              "title": "Registered"
+            },
+            "error": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Error"
+            },
+            "price": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Price"
+            }
+          },
+          "type": "object",
+          "required": [
+            "domain",
+            "registered"
+          ],
+          "title": "DomainRegistrationResult",
+          "description": "Response model for domain registration result."
+        },
+        "DomainSSLModeModel": {
+          "properties": {
+            "domain": {
+              "type": "string",
+              "title": "Domain"
+            },
+            "ssl_mode": {
+              "$ref": "#/components/schemas/SSLMode"
+            }
+          },
+          "type": "object",
+          "required": [
+            "domain",
+            "ssl_mode"
+          ],
+          "title": "DomainSSLModeModel",
+          "description": "Model for domain SSL change request.\nValidates domain format."
+        },
+        "DomainSecurityModeModel": {
+          "properties": {
+            "domain": {
+              "type": "string",
+              "title": "Domain"
+            },
+            "security_mode": {
+              "$ref": "#/components/schemas/SecurityMode"
+            }
+          },
+          "type": "object",
+          "required": [
+            "domain",
+            "security_mode"
+          ],
+          "title": "DomainSecurityModeModel",
+          "description": "Model for domain security change request.\nValidates domain format."
+        },
+        "DomainsChangeIpIn": {
+          "properties": {
+            "domains": {
+              "items": {
+                "$ref": "#/components/schemas/DomainIpModel"
+              },
+              "type": "array",
+              "title": "Domains"
+            }
+          },
+          "type": "object",
+          "required": [
+            "domains"
+          ],
+          "title": "DomainsChangeIpIn",
+          "description": "Вход: список до 10 доменов"
+        },
+        "DomainsChangeProxyStatusIn": {
+          "properties": {
+            "domains": {
+              "items": {
+                "$ref": "#/components/schemas/DomainChangeProxyStatusModel"
+              },
+              "type": "array",
+              "title": "Domains"
+            }
+          },
+          "type": "object",
+          "required": [
+            "domains"
+          ],
+          "title": "DomainsChangeProxyStatusIn",
+          "description": "Request model for changing proxy status for domain.\nValidates list length (1-10) and uniqueness of domains.\nInner validation happens in DomainModel."
+        },
+        "DomainsChangeProxyStatusOut": {
+          "properties": {
+            "domains": {
+              "items": {
+                "$ref": "#/components/schemas/DomainChangeProxyStatusOut"
+              },
+              "type": "array",
+              "title": "Domains"
+            }
+          },
+          "type": "object",
+          "required": [
+            "domains"
+          ],
+          "title": "DomainsChangeProxyStatusOut",
+          "description": "Response model for the bulk proxy status change operation."
+        },
+        "DomainsChangeSSLModeIn": {
+          "properties": {
+            "domains": {
+              "items": {
+                "$ref": "#/components/schemas/DomainSSLModeModel"
+              },
+              "type": "array",
+              "title": "Domains"
+            }
+          },
+          "type": "object",
+          "required": [
+            "domains"
+          ],
+          "title": "DomainsChangeSSLModeIn",
+          "description": "Request model for changing SSL settings for domains.\nValidates domain list length (1-10) and uniqueness of domains.\nInner validation happens in DomainSSLModel."
+        },
+        "DomainsChangeSSLModeOut": {
+          "properties": {
+            "domains": {
+              "items": {
+                "$ref": "#/components/schemas/DomainChangeSSLModeResult"
+              },
+              "type": "array",
+              "title": "Domains"
+            }
+          },
+          "type": "object",
+          "required": [
+            "domains"
+          ],
+          "title": "DomainsChangeSSLModeOut",
+          "description": "Response model for the bulk SSL change operation."
+        },
+        "DomainsChangeSecurityModeIn": {
+          "properties": {
+            "domains": {
+              "items": {
+                "$ref": "#/components/schemas/DomainSecurityModeModel"
+              },
+              "type": "array",
+              "title": "Domains"
+            }
+          },
+          "type": "object",
+          "required": [
+            "domains"
+          ],
+          "title": "DomainsChangeSecurityModeIn",
+          "description": "Request model for changing SSL settings for domains.\nValidates domain list length (1-10) and uniqueness of domains.\nInner validation happens in DomainSecurityModel."
+        },
+        "DomainsChangeSecurityModeOut": {
+          "properties": {
+            "domains": {
+              "items": {
+                "$ref": "#/components/schemas/DomainChangeSecurityModeResult"
+              },
+              "type": "array",
+              "title": "Domains"
+            }
+          },
+          "type": "object",
+          "required": [
+            "domains"
+          ],
+          "title": "DomainsChangeSecurityModeOut",
+          "description": "Response model for the bulk security change operation."
+        },
+        "DomainsClearCacheIn": {
+          "properties": {
+            "domains": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array",
+              "title": "Domains"
+            }
+          },
+          "type": "object",
+          "required": [
+            "domains"
+          ],
+          "title": "DomainsClearCacheIn",
+          "description": ""
+        },
+        "DomainsClearCacheOut": {
+          "properties": {
+            "domains": {
+              "items": {
+                "$ref": "#/components/schemas/DomainInClearCacheOut"
+              },
+              "type": "array",
+              "title": "Domains"
+            }
+          },
+          "type": "object",
+          "required": [
+            "domains"
+          ],
+          "title": "DomainsClearCacheOut",
+          "description": "Response model for clearing cache for domains."
+        },
+        "DomainsDeleteIn": {
+          "properties": {
+            "domains": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array",
+              "title": "Domains"
+            }
+          },
+          "type": "object",
+          "required": [
+            "domains"
+          ],
+          "title": "DomainsDeleteIn",
+          "description": "Request model for deleting domains."
+        },
+        "DomainsDeleteOut": {
+          "properties": {
+            "domains": {
+              "items": {
+                "$ref": "#/components/schemas/DomainDeleteResult"
+              },
+              "type": "array",
+              "title": "Domains"
+            }
+          },
+          "type": "object",
+          "required": [
+            "domains"
+          ],
+          "title": "DomainsDeleteOut",
+          "description": "Response model for the bulk domain delete operation."
+        },
+        "DomainsIn": {
+          "properties": {
+            "domains": {
+              "items": {
+                "$ref": "#/components/schemas/DomainModel"
+              },
+              "type": "array",
+              "title": "Domains"
+            }
+          },
+          "type": "object",
+          "required": [
+            "domains"
+          ],
+          "title": "DomainsIn",
+          "description": "Request model for domain registration.\nValidates domain list length (1-10) and uniqueness of domains.\nInner validation happens in DomainModel."
+        },
+        "DomainsInIP": {
+          "properties": {
+            "domains": {
+              "items": {
+                "$ref": "#/components/schemas/DomainModelIP"
+              },
+              "type": "array",
+              "title": "Domains"
+            }
+          },
+          "type": "object",
+          "required": [
+            "domains"
+          ],
+          "title": "DomainsInIP"
+        },
+        "GetDNSRecordsOut": {
+          "properties": {
+            "success": {
+              "type": "boolean",
+              "title": "Success"
+            },
+            "domain_name": {
+              "type": "string",
+              "title": "Domain Name"
+            },
+            "dns_records": {
+              "items": {
+                "$ref": "#/components/schemas/DNSRecordModelOut"
+              },
+              "type": "array",
+              "title": "Dns Records"
+            },
+            "error": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Error"
+            }
+          },
+          "type": "object",
+          "required": [
+            "success",
+            "domain_name",
+            "dns_records"
+          ],
+          "title": "GetDNSRecordsOut"
+        },
+        "HTTPValidationError": {
+          "properties": {
+            "detail": {
+              "items": {
+                "$ref": "#/components/schemas/ValidationError"
+              },
+              "type": "array",
+              "title": "Detail"
+            }
+          },
+          "type": "object",
+          "title": "HTTPValidationError"
+        },
+        "RegType": {
+          "type": "string",
+          "enum": [
+            "Basic",
+            "Solid",
+            "Alpha",
+            "Titan",
+            "Immortal"
+          ],
+          "title": "RegType"
+        },
+        "RegTypePublic": {
+          "type": "string",
+          "enum": [
+            "solid",
+            "alpha",
+            "titan",
+            "immortal"
+          ],
+          "title": "RegTypePublic",
+          "description": "То, что увидит клиент в Swagger и валидации."
+        },
+        "SSLMode": {
+          "type": "string",
+          "enum": [
+            "off",
+            "flexible",
+            "full"
+          ],
+          "title": "SSLMode"
+        },
+        "SecurityMode": {
+          "type": "string",
+          "enum": [
+            "essentially_off",
+            "low",
+            "medium",
+            "high",
+            "under_attack"
+          ],
+          "title": "SecurityMode"
+        },
+        "UserBalanceOut": {
+          "properties": {
+            "balance": {
+              "type": "number",
+              "title": "Balance"
+            }
+          },
+          "type": "object",
+          "required": [
+            "balance"
+          ],
+          "title": "UserBalanceOut",
+          "description": "User balance response model."
+        },
+        "UserDomainsOut": {
+          "properties": {
+            "domains": {
+              "items": {
+                "$ref": "#/components/schemas/DomainInUserDomains"
+              },
+              "type": "array",
+              "title": "Domains"
+            }
+          },
+          "type": "object",
+          "required": [
+            "domains"
+          ],
+          "title": "UserDomainsOut",
+          "description": "User domains response model."
+        },
+        "ValidationError": {
+          "properties": {
+            "loc": {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ]
+              },
+              "type": "array",
+              "title": "Location"
+            },
+            "msg": {
+              "type": "string",
+              "title": "Message"
+            },
+            "type": {
+              "type": "string",
+              "title": "Error Type"
+            }
+          },
+          "type": "object",
+          "required": [
+            "loc",
+            "msg",
+            "type"
+          ],
+          "title": "ValidationError"
+        }
+      },
+      "securitySchemes": {
+        "HTTPBearer": {
+          "type": "http",
+          "description": "Введите ваш Bearer токен в формате 'Bearer \u003Cтокен\u003E'. Сам префикс 'Bearer ' добавлять НЕ НУЖНО, только сам токен.",
+          "scheme": "bearer"
+        }
+      }
+    }
+  }

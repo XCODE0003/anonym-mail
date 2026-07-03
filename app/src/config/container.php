@@ -78,6 +78,9 @@ return [
         $assetVersion = $assetOverride !== '' ? $assetOverride : (string) time();
         $twig->addGlobal('asset_version', $assetVersion);
 
+        $torOnion = trim((string) ($_ENV['TOR_ONION_WEB'] ?? ''));
+        $twig->addGlobal('tor_onion_web', $torOnion);
+
         return $twig;
     },
 

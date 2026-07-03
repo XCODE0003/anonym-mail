@@ -1,52 +1,31 @@
 #!/bin/bash
-# Display Tor .onion addresses
+# Display Tor .onion addresses from the running prod stack.
+#
+# Usage:
+#   ./scripts/show-onion.sh                  # auto-detect prod compose project
+#   COMPOSE_PROJECT=anonym-mail ./scripts/show-onion.sh
 
 set -e
 
-TOR_DATA_DIR="${TOR_DATA_DIR:-./tor}"
+CONTAINER="${TOR_CONTAINER:-mail-tor}"
+
+if ! docker ps --format '{{.Names}}' | grep -q "^${CONTAINER}$"; then
+    echo "Tor container '${CONTAINER}' is not running."
+    echo "Start it with: docker compose -f docker-compose.prod.yml up -d tor"
+    exit 1
+fi
 
 echo "=== Tor .onion Addresses ==="
 echo ""
 
-# Web
-if [ -f "$TOR_DATA_DIR/hidden_service_web/hostname" ]; then
-    WEB_ONION=$(cat "$TOR_DATA_DIR/hidden_service_web/hostname")
-    echo "Web (public site): http://$WEB_ONION"
+WEB=$(docker exec "$CONTAINER" cat /var/lib/tor/hidden_service_web/hostname 2>/dev/null || true)
+if [ -n "$WEB" ]; then
+    echo "Web (public site): http://$WEB"
 else
-    echo "Web: Not yet generated (start Tor container first)"
-fi
-
-# Webmail
-if [ -f "$TOR_DATA_DIR/hidden_service_webmail/hostname" ]; then
-    MAIL_ONION=$(cat "$TOR_DATA_DIR/hidden_service_webmail/hostname")
-    echo "Webmail:           http://$MAIL_ONION"
-else
-    echo "Webmail: Not yet generated"
-fi
-
-# SMTP
-if [ -f "$TOR_DATA_DIR/hidden_service_smtp/hostname" ]; then
-    SMTP_ONION=$(cat "$TOR_DATA_DIR/hidden_service_smtp/hostname")
-    echo "SMTP:              $SMTP_ONION:25 / :587"
-else
-    echo "SMTP: Not yet generated"
-fi
-
-# IMAP
-if [ -f "$TOR_DATA_DIR/hidden_service_imap/hostname" ]; then
-    IMAP_ONION=$(cat "$TOR_DATA_DIR/hidden_service_imap/hostname")
-    echo "IMAP:              $IMAP_ONION:993 / :143"
-else
-    echo "IMAP: Not yet generated"
+    echo "Web: not yet generated — wait ~30s after first start, then re-run."
 fi
 
 echo ""
-echo "=== Client Configuration ==="
-echo ""
-echo "To access via Tor Browser:"
-echo "  1. Install Tor Browser"
-echo "  2. Navigate to the .onion address above"
-echo ""
-echo "For email clients via Tor:"
-echo "  1. Configure SOCKS5 proxy: 127.0.0.1:9050"
-echo "  2. Use the SMTP/IMAP .onion addresses above"
+echo "To surface this on the site footer, add to .env on the host:"
+echo "  TOR_ONION_WEB=$WEB"
+echo "Then: docker compose -f docker-compose.prod.yml up -d php"

@@ -27,8 +27,13 @@ final class ImapClient
 
     public function login(string $email, string $password): bool
     {
+        // Clear PHP IMAP error stack from previous attempts in the same FPM worker.
+        // A stale error can mask a successful subsequent imap_open.
+        @imap_errors();
+        @imap_alerts();
+
         $mailbox = $this->getMailboxString('INBOX');
-        
+
         $connection = @imap_open(
             $mailbox,
             $email,
@@ -37,8 +42,12 @@ final class ImapClient
             1,
             ['DISABLE_AUTHENTICATOR' => 'GSSAPI']
         );
-        
+
         if ($connection === false) {
+            $errors = imap_errors() ?: [];
+            if ($errors !== []) {
+                error_log('[webmail] IMAP login failed for ' . $email . ': ' . implode(' | ', $errors));
+            }
             return false;
         }
         
@@ -317,6 +326,10 @@ final class ImapClient
     /**
      * Send mail via SMTP submission (AUTH + STARTTLS), not PHP mail().
      * PHP-FPM images usually have no sendmail; Postfix listens on 587 inside the stack.
+     *
+     * On success, also IMAP-APPENDs the raw RFC822 to the user's Sent folder
+     * so it shows up in the webmail UI. APPEND failures are non-fatal — the
+     * message has already left the building.
      */
     public function sendMessage(string $from, string $password, string $to, string $subject, string $body): bool
     {
@@ -349,6 +362,8 @@ final class ImapClient
 
             $mailer->send($message);
 
+            $this->appendToSent($from, $password, $message->toString());
+
             return true;
         } catch (TransportExceptionInterface | \Throwable $e) {
             if (filter_var($_ENV['APP_DEBUG'] ?? 'false', FILTER_VALIDATE_BOOLEAN)) {
@@ -356,6 +371,64 @@ final class ImapClient
             }
 
             return false;
+        }
+    }
+
+    /**
+     * IMAP APPEND of a raw RFC822 message to the user's Sent folder.
+     * Tries common Sent folder names and silently gives up if none exist —
+     * we do not want to block the response on this.
+     */
+    public function appendToSent(string $email, string $password, string $rawRfc822): void
+    {
+        $candidates = ['Sent', 'INBOX.Sent', 'Sent Items', 'Sent Messages'];
+
+        // Reuse already-authenticated connection if it belongs to this user.
+        $reuseConnection = $this->connection !== null && $this->email === $email;
+        $tempLogin = false;
+
+        if (!$reuseConnection) {
+            if (!$this->login($email, $password)) {
+                error_log('[Webmail] APPEND skipped: re-login failed for ' . $email);
+                return;
+            }
+            $tempLogin = true;
+        }
+
+        try {
+            $folders = $this->getFolders();
+            $target = null;
+            foreach ($candidates as $name) {
+                if (in_array($name, $folders, true)) {
+                    $target = $name;
+                    break;
+                }
+            }
+
+            if ($target === null) {
+                // Auto-create "Sent" if Dovecot autocreate didn't.
+                $createMailbox = $this->getMailboxString('Sent');
+                if ($this->connection !== null && @imap_createmailbox($this->connection, $createMailbox)) {
+                    @imap_subscribe($this->connection, $createMailbox);
+                    $target = 'Sent';
+                } else {
+                    error_log('[Webmail] APPEND: no Sent folder found for ' . $email);
+                    return;
+                }
+            }
+
+            $mailbox = $this->getMailboxString($target);
+            // Mark as already-seen since it's our own outgoing message.
+            $ok = $this->connection !== null
+                && @imap_append($this->connection, $mailbox, $rawRfc822, '\\Seen');
+            if (!$ok) {
+                $errors = imap_errors() ?: [];
+                error_log('[Webmail] APPEND failed for ' . $email . ' → ' . $target . ': ' . implode(' | ', $errors));
+            }
+        } finally {
+            if ($tempLogin) {
+                $this->logout();
+            }
         }
     }
 

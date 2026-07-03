@@ -72,9 +72,20 @@ $app->post('/login', function (Request $request, Response $response) {
     $imap = $this->get(ImapClient::class);
     
     $body = $request->getParsedBody();
-    $email = $body['email'] ?? '';
-    $password = $body['password'] ?? '';
-    
+    $email = trim((string) ($body['email'] ?? ''));
+    $password = (string) ($body['password'] ?? '');
+
+    // Strip BOM/zero-width chars often pasted from password managers
+    $password = preg_replace('/^[\x{FEFF}\x{200B}\x{200C}\x{200D}\s]+|[\x{FEFF}\x{200B}\x{200C}\x{200D}\s]+$/u', '', $password) ?? $password;
+    $email = strtolower($email);
+
+    if ($email === '' || $password === '') {
+        return webmailRender($response, $twig, 'login.html.twig', [
+            'page_title' => 'Login',
+            'error' => 'Email and password are required',
+        ]);
+    }
+
     // Try IMAP login
     if ($imap->login($email, $password)) {
         $_SESSION['webmail_user'] = [

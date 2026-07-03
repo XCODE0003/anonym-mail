@@ -36,6 +36,12 @@
             <a href="/canary">Canary</a>
             <a href="/contact">Contact</a>
         </nav>
+        {% if tor_onion_web %}
+            <p class="footer-tor">
+                Tor:
+                <a href="http://{{ tor_onion_web }}/" rel="noreferrer noopener">{{ tor_onion_web }}</a>
+            </p>
+        {% endif %}
     </footer>
 </body>
 </html>

@@ -46,6 +46,7 @@ services:
       - SMTP_SUBMISSION_HOST=${SMTP_SUBMISSION_HOST:-postfix}
       - SMTP_SUBMISSION_PORT=${SMTP_SUBMISSION_PORT:-587}
       - SMTP_TLS_VERIFY_PEER=${SMTP_TLS_VERIFY_PEER:-false}
+      - TOR_ONION_WEB=${TOR_ONION_WEB:-}
     depends_on:
       mysql:
         condition: service_healthy
@@ -87,8 +88,8 @@ services:
 
   postfix:
     build:
-      context: ./docker/postfix
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: docker/postfix/Dockerfile
     container_name: mail-postfix
     restart: unless-stopped
     hostname: mail.owlmail.cc
@@ -117,7 +118,7 @@ services:
   dovecot:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: docker/dovecot/Dockerfile
     container_name: mail-dovecot
     restart: unless-stopped
     ports:
@@ -154,6 +155,19 @@ services:
     networks:
       - mail-network
 
+  tor:
+    build:
+      context: ./docker/tor
+      dockerfile: Dockerfile
+    container_name: mail-tor
+    restart: unless-stopped
+    volumes:
+      - tor_data:/var/lib/tor
+    depends_on:
+      - nginx
+    networks:
+      - mail-network
+
 networks:
   mail-network:
     driver: bridge
@@ -164,3 +178,4 @@ volumes:
   mail_data:
   certbot-webroot:
   postfix_spool:
+  tor_data:
