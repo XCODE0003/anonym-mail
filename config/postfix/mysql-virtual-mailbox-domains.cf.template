@@ -1,0 +1,9 @@
+# Virtual mailbox domains lookup (MySQL)
+# Rendered from this template by the container entrypoint (envsubst).
+
+hosts = ${DB_HOST}
+user = ${DB_USER}
+password = ${DB_PASSWORD}
+dbname = ${DB_NAME}
+
+query = SELECT name FROM domains WHERE name = '%s' AND active = true

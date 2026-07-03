@@ -1,10 +1,15 @@
 #!/bin/bash
 set -e
 
-# Substitute environment variables in config files
-envsubst < /etc/postfix/main.cf.template > /etc/postfix/main.cf 2>/dev/null || true
-envsubst < /etc/postfix/pgsql-virtual-mailbox-domains.cf.template > /etc/postfix/pgsql-virtual-mailbox-domains.cf 2>/dev/null || true
-envsubst < /etc/postfix/pgsql-virtual-mailbox-maps.cf.template > /etc/postfix/pgsql-virtual-mailbox-maps.cf 2>/dev/null || true
+# Render MySQL map configs from templates, injecting DB credentials at runtime.
+for map in mysql-virtual-mailbox-domains mysql-virtual-mailbox-maps mysql-virtual-alias-maps; do
+    if [ -f "/etc/postfix/${map}.cf.template" ]; then
+        envsubst '$DB_HOST $DB_NAME $DB_USER $DB_PASSWORD' \
+            < "/etc/postfix/${map}.cf.template" \
+            > "/etc/postfix/${map}.cf"
+        chmod 640 "/etc/postfix/${map}.cf"
+    fi
+done
 
 # Generate aliases database
 newaliases 2>/dev/null || true

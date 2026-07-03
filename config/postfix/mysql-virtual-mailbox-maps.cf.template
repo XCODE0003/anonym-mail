@@ -1,8 +1,9 @@
-# Virtual mailbox maps lookup
+# Virtual mailbox maps lookup (MySQL)
+# Rendered from this template by the container entrypoint (envsubst).
 
-hosts = postgres
-user = mailservice
+hosts = ${DB_HOST}
+user = ${DB_USER}
 password = ${DB_PASSWORD}
-dbname = mailservice
+dbname = ${DB_NAME}
 
 query = SELECT CONCAT(u.local_part, '@', d.name, '/') FROM users u JOIN domains d ON u.domain_id = d.id WHERE u.local_part = '%u' AND d.name = '%d' AND u.frozen = false AND (u.delete_after IS NULL OR u.delete_after > CURRENT_DATE)
